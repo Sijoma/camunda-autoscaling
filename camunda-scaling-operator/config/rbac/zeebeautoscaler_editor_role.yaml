@@ -1,0 +1,27 @@
+# permissions for end users to edit zeebeautoscalers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: camunda-scaling-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: zeebeautoscaler-editor-role
+rules:
+- apiGroups:
+  - camunda.sijoma.dev
+  resources:
+  - zeebeautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - camunda.sijoma.dev
+  resources:
+  - zeebeautoscalers/status
+  verbs:
+  - get

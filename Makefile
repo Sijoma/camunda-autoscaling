@@ -7,5 +7,9 @@ setup-dev:
 deploy-camunda:
 	kustomize build --enable-helm ./deploy/local/camunda | kubectl apply -f -
 
+# TODO: use camunda-scaling-operator/Makefile:148
+# deploy-operator:
+
+
 teardown:
 	kind delete cluster --name hackdays

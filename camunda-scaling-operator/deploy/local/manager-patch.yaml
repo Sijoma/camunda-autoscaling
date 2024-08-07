@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-scaling-operator-controller-manager
+  namespace: camunda-scaling-operator-system
+  labels:
+    control-plane: controller-manager
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: manager
+#        Important for kind to work
+        imagePullPolicy: IfNotPresent

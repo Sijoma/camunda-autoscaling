@@ -1,0 +1,9 @@
+apiVersion: camunda.sijoma.dev/v1alpha1
+kind: ZeebeAutoscaler
+metadata:
+  name: zeebeautoscaler-sample
+spec:
+  minReplicas: 1
+  maxReplicas: 2
+  zeebeRef:
+    name: my-zeebe
