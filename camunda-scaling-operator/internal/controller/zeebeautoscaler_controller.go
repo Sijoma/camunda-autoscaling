@@ -19,7 +19,11 @@ package controller
 import (
 	"context"
 
+	appsv1 "k8s.io/api/apps/v1"
+	autoscalingv1 "k8s.io/api/autoscaling/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -39,17 +43,51 @@ type ZeebeAutoscalerReconciler struct {
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the ZeebeAutoscaler object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.18.4/pkg/reconcile
 func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
+	logger := log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	// populate this CRD
+	zeebeAutoscalerCR := new(camundav1alpha1.ZeebeAutoscaler)
+
+	if err := r.Get(ctx, req.NamespacedName, zeebeAutoscalerCR); err != nil {
+		// do not requeue "not found" errors
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	logger.Info("starting reconcile", "name", zeebeAutoscalerCR.Name)
+
+	// 1. Lookup statefulset
+	var scaleTarget appsv1.StatefulSet
+	err := r.Get(ctx, types.NamespacedName{
+		Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
+		Namespace: zeebeAutoscalerCR.Namespace,
+	}, &scaleTarget)
+	if err != nil {
+		// Should we actually continue to reconcile when the statefulset does not yet exist?
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	// 2. check if it matches the desired replicas
+	if scaleTarget.Spec.Replicas != zeebeAutoscalerCR.Spec.Replicas {
+
+		// Todo: Should we really use scale?
+		sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
+			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
+			Namespace: zeebeAutoscalerCR.Namespace}}
+		scale := &autoscalingv1.Scale{}
+		err = r.SubResource("scale").Get(ctx, sts, scale)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+		scale = &autoscalingv1.Scale{Spec: autoscalingv1.ScaleSpec{Replicas: *zeebeAutoscalerCR.Spec.Replicas}}
+		r.SubResource("scale").Update(ctx, sts, client.WithSubResourceBody(scale))
+
+		// 3. Request change on broker
+		// Todo:
+
+	}
 
 	return ctrl.Result{}, nil
 }
