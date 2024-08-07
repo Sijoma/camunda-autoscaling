@@ -18,6 +18,7 @@ package controller
 
 import (
 	"context"
+	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
@@ -40,6 +41,9 @@ type ZeebeAutoscalerReconciler struct {
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/finalizers,verbs=update
+
+// +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=apps,resources=statefulsets/status,verbs=get
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -82,14 +86,20 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			return ctrl.Result{}, err
 		}
 		scale = &autoscalingv1.Scale{Spec: autoscalingv1.ScaleSpec{Replicas: *zeebeAutoscalerCR.Spec.Replicas}}
-		r.SubResource("scale").Update(ctx, sts, client.WithSubResourceBody(scale))
+		err = r.SubResource("scale").Update(ctx, sts, client.WithSubResourceBody(scale))
+		if err != nil {
+			return ctrl.Result{}, err
+		}
 
 		// 3. Request change on broker
 		// Todo:
-
 	}
 
-	return ctrl.Result{}, nil
+	logger.Info("reconcile success", "name", zeebeAutoscalerCR.Name)
+
+	return ctrl.Result{
+		RequeueAfter: time.Second * 20,
+	}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
