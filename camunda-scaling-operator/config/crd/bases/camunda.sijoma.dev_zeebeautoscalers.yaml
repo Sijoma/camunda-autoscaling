@@ -39,10 +39,7 @@ spec:
           spec:
             description: ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
             properties:
-              maxReplicas:
-                format: int32
-                type: integer
-              minReplicas:
+              replicas:
                 format: int32
                 type: integer
               zeebeRef:

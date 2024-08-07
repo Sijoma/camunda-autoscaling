@@ -22,8 +22,7 @@ import (
 
 // ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
 type ZeebeAutoscalerSpec struct {
-	MinReplicas *int32 `json:"minReplicas,omitempty"`
-	MaxReplicas *int32 `json:"maxReplicas,omitempty"`
+	Replicas *int32 `json:"replicas,omitempty"`
 
 	// +kubebuilder:validation:Required
 	ZeebeRef ZeebeRef `json:"zeebeRef"`
