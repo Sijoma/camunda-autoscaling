@@ -7,6 +7,9 @@ setup-dev:
 deploy-camunda:
 	kustomize build --enable-helm ./deploy/local/camunda | kubectl apply -f -
 
+undeploy-camunda:
+	kustomize build --enable-helm ./deploy/local/camunda | kubectl delete -f -
+
 # TODO: use camunda-scaling-operator/Makefile:148
 # deploy-operator:
 

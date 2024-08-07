@@ -11,3 +11,4 @@ namespace: camunda-platform
 IncludeCRDs: true
 valuesMerge: merge
 valuesFile: camunda-values.yaml
+skipTests: true
