@@ -1,0 +1,77 @@
+connectors:
+  enabled: false
+  # https://hub.docker.com/r/camunda/connectors-bundle/tags
+  image:
+    repository: camunda/connectors-bundle
+    tag: 8.5.4
+
+operate:
+  enabled: false
+  # https://hub.docker.com/r/camunda/operate/tags
+  image:
+    tag: 8.5.4
+
+optimize:
+  enabled: false
+  # https://hub.docker.com/r/camunda/optimize/tags
+  image:
+    repository: camunda/optimize
+    tag: 8.5.3
+
+tasklist:
+  enabled: false
+  # https://hub.docker.com/r/camunda/tasklist/tags
+  image:
+    tag: 8.5.2
+
+zeebe:
+  clusterSize: "1"
+  partitionCount: "3"
+  replicationFactor: "3"
+  # https://hub.docker.com/r/camunda/zeebe/tags
+  image:
+    tag: 8.5.3
+
+zeebeGateway:
+  replicas: 1
+  # https://hub.docker.com/r/camunda/zeebe/tags
+  image:
+    tag: 8.5.3
+
+#
+# Identity
+#
+
+identity:
+  # https://hub.docker.com/r/camunda/identity/tags
+  image:
+    tag: 8.5.3
+
+identityKeycloak:
+  # https://hub.docker.com/r/bitnami/keycloak/tags
+  image:
+    repository: bitnami/keycloak
+    tag: 23.0.7
+  postgresql:
+    # https://hub.docker.com/r/bitnami/postgresql/tags
+    image:
+      repository: bitnami/postgresql
+      tag: 15.7.0
+
+#
+# Elasticsearch
+#
+
+elasticsearch:
+  # https://hub.docker.com/r/bitnami/elasticsearch/tags
+  image:
+    repository: bitnami/elasticsearch
+    tag: 8.12.2
+  master:
+    resources:
+      requests:
+        cpu: 700m
+        memory: 1Gi
+      limits:
+        cpu: 1
+        memory: 2Gi
