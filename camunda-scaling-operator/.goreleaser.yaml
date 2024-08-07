@@ -1,0 +1,50 @@
+# Make sure to check the documentation at https://goreleaser.com
+version: 2
+
+builds:
+  - main: ./cmd/main.go
+    id: camunda-scaling-operator
+    binary: manager
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - arm64
+      - amd64
+
+dockers:
+  - id: camunda-scaling-operator
+    dockerfile: Dockerfile.GoReleaser
+    build_flag_templates:
+      - "--label=org.opencontainers.image.created={{.Date}}"
+      - "--label=org.opencontainers.image.title={{.ProjectName}}"
+      - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+      - "--label=org.opencontainers.image.version={{.Tag}}"
+    image_templates:
+      - "ghcr.io/sijoma/camunda-scaling-operator:{{ .Tag }}"
+
+release:
+  prerelease: auto
+  mode: replace
+  name_template: "{{.ProjectName}} {{.Version}}"
+
+source:
+  enabled: false
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: "{{ incpatch .Version }}-next"
+changelog:
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^.*?feat(\([[:word:]]+\))??!?:.+$'
+      order: 0
+    - title: "Bug fixes"
+      regexp: '^.*?fix(\([[:word:]]+\))??!?:.+$'
+      order: 1
+    - title: Others
+      order: 999
