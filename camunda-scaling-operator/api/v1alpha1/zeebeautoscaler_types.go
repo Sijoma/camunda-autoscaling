@@ -20,22 +20,30 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
-
 // ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
 type ZeebeAutoscalerSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	MinReplicas *int32 `json:"minReplicas,omitempty"`
+	MaxReplicas *int32 `json:"maxReplicas,omitempty"`
 
-	// Foo is an example field of ZeebeAutoscaler. Edit zeebeautoscaler_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// +kubebuilder:validation:Required
+	ZeebeRef ZeebeRef `json:"zeebeRef"`
+}
+
+// ZeebeRef references that exists in the same namespace.
+type ZeebeRef struct {
+	// Name of the Zeebe statefulset to scale
+	// +kubebuilder:validation:MinLength=1
+	Name string `json:"name,omitempty"`
 }
 
 // ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler
 type ZeebeAutoscalerStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// ObservedGeneration is the last observed generation by the controller.
+	ObservedGeneration *int64 `json:"observedGeneration,omitempty"`
+
+	// Conditions holds the information on the last operations on Zeebe that can be useful during scaling
+	// +kubebuilder:validation:Optional
+	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
 }
 
 // +kubebuilder:object:root=true
