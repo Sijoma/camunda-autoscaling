@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- camunda_v1alpha1_zeebeautoscaler.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

@@ -1,0 +1,9 @@
+apiVersion: camunda.sijoma.dev/v1alpha1
+kind: ZeebeAutoscaler
+metadata:
+  labels:
+    app.kubernetes.io/name: camunda-scaling-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: zeebeautoscaler-sample
+spec:
+  # TODO(user): Add fields here

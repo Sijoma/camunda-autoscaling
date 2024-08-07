@@ -7,4 +7,14 @@ layout:
 - go.kubebuilder.io/v4
 projectName: camunda-scaling-operator
 repo: github.com/sijoma/camunda-scaling-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: sijoma.dev
+  group: camunda
+  kind: ZeebeAutoscaler
+  path: github.com/sijoma/camunda-scaling-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"
