@@ -132,9 +132,21 @@ spec:
                   the controller.
                 format: int64
                 type: integer
+              replicas:
+                format: int32
+                type: integer
+              selector:
+                type: string
+            required:
+            - replicas
+            - selector
             type: object
         type: object
     served: true
     storage: true
     subresources:
+      scale:
+        labelSelectorPath: .status.selector
+        specReplicasPath: .spec.replicas
+        statusReplicasPath: .status.replicas
       status: {}

@@ -44,6 +44,7 @@ type ZeebeAutoscalerReconciler struct {
 
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=statefulsets/status,verbs=get
+// +kubebuilder:rbac:groups=apps,resources=statefulsets/scale,verbs=get;update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -75,7 +76,6 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// 2. check if it matches the desired replicas
 	if scaleTarget.Spec.Replicas != zeebeAutoscalerCR.Spec.Replicas {
-
 		// Todo: Should we really use scale?
 		sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
 			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
@@ -95,6 +95,26 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		// Todo:
 	}
 
+	// Refresh CR to prevent status update errors
+	if err := r.Get(ctx, req.NamespacedName, zeebeAutoscalerCR); err != nil {
+		// do not requeue "not found" errors
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+	// Get the selector, this is important for HPA to work
+	// https://book.kubebuilder.io/reference/generating-crd.html#scale
+	selector, err := metav1.LabelSelectorAsSelector(scaleTarget.Spec.Selector)
+	if err != nil {
+		logger.Error(err, "Error retrieving statefulset selector for scale ")
+		return ctrl.Result{}, err
+	}
+	zeebeAutoscalerCR.Status.Selector = selector.String()
+	zeebeAutoscalerCR.Status.Replicas = *zeebeAutoscalerCR.Spec.Replicas
+
+	err = r.Status().Update(ctx, zeebeAutoscalerCR)
+	if err != nil {
+		logger.Error(err, "Error updating ZeebeAutoscaler CR status")
+		return ctrl.Result{}, err
+	}
 	logger.Info("reconcile success", "name", zeebeAutoscalerCR.Name)
 
 	return ctrl.Result{

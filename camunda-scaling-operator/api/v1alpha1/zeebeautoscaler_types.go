@@ -43,10 +43,14 @@ type ZeebeAutoscalerStatus struct {
 	// Conditions holds the information on the last operations on Zeebe that can be useful during scaling
 	// +kubebuilder:validation:Optional
 	Conditions []metav1.Condition `json:"conditions,omitempty" patchStrategy:"merge" patchMergeKey:"type" protobuf:"bytes,1,rep,name=conditions"`
+
+	Replicas int32  `json:"replicas"`
+	Selector string `json:"selector"`
 }
 
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
 
 // ZeebeAutoscaler is the Schema for the zeebeautoscalers API
 type ZeebeAutoscaler struct {
