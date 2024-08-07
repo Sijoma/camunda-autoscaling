@@ -143,6 +143,17 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 undeploy: kustomize ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
 	$(KUSTOMIZE) build config/default | $(KUBECTL) delete --ignore-not-found=$(ignore-not-found) -f -
 
+## Custom
+
+.PHONY: deploy-test-env
+deploy-test-env: manifests kustomize docker-build ## Deploy controller to the K8s cluster specified in ~/.kube/config.
+	kind load docker-image ${IMG} --name hackdays
+	cd deploy/local && $(KUSTOMIZE) edit set image controller=${IMG}
+	kustomize build deploy/local | kubectl apply -f -
+
+
+
+
 ##@ Dependencies
 
 ## Location to install dependencies to
