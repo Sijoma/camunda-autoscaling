@@ -1,0 +1,19 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: camunda-hpa
+  namespace: camunda-platform
+spec:
+  minReplicas: 3
+  maxReplicas: 7
+  metrics:
+    - resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 2
+      type: Resource
+  scaleTargetRef:
+    apiVersion: camunda.sijoma.dev/v1alpha1
+    kind: ZeebeAutoscaler
+    name: zeebeautoscaler-sample
