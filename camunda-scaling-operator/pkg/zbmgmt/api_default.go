@@ -605,7 +605,7 @@ func (a *DefaultAPIService) RootGetExecute(r ApiRootGetRequest) (*GetTopologyRes
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/"
+	localVarPath := localBasePath
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
