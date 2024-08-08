@@ -106,15 +106,6 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	desiredReplicas := *zeebeAutoscalerCR.Spec.Replicas
 	if currentReplicas != desiredReplicas {
 		// TODO: Do Zeebe CALL first when scaling down and vice versa
-
-		// Todo: Maybe its nicer to use the statefulset info
-		brokers := topology.GetBrokers()
-		var brokerIDs []int32
-		for _, broker := range brokers {
-			brokerIDs = append(brokerIDs, *broker.Id)
-		}
-		logger.Info("broker ids fetched", "ids", brokerIDs)
-
 		sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
 			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
 			Namespace: zeebeAutoscalerCR.Namespace}}
