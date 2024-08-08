@@ -13,9 +13,10 @@ import (
 	"context"
 	"testing"
 
-	openapiclient "github.com/sijoma/camunda-autoscaling-hackday/scalingclient/zbmgmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	openapiclient "github.com/sijoma/camunda-scaling-operator/pkg/scalingclient/zbmgmt"
 )
 
 func Test_zbmgmt_DefaultAPIService(t *testing.T) {
