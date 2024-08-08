@@ -115,7 +115,7 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	// Check if we already scaled down brokers, if so, we can scale down the statefulset
 	// In words: "we are downscaling" && the zeebe topology has already removed the broker
 	if currentReplicas > desiredReplicas && len(topology.Brokers) < int(currentReplicas) {
-		if err := r.ScaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
+		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
@@ -123,10 +123,10 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	if currentReplicas < desiredReplicas {
 		logger.Info("We are scaling up! ⬆️️")
-		if err := r.ScaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
+		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
-		if err := r.ScaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
+		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
 			return ctrl.Result{}, err
 		}
 
@@ -136,7 +136,7 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		logger.Info("we are scaling down!⬇️")
 
 		// we didnt yet request that Zeebe should scale down
-		if err := r.ScaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
+		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
 			return ctrl.Result{}, err
 		}
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
@@ -167,7 +167,7 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	return ctrl.Result{}, nil
 }
 
-func (r *ZeebeAutoscalerReconciler) ScaleZeebeBrokers(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) error {
+func (r *ZeebeAutoscalerReconciler) scaleZeebeBrokers(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) error {
 	desiredBrokerIDs := make([]int32, 0, desiredReplicas)
 	for id := range desiredReplicas {
 		desiredBrokerIDs = append(desiredBrokerIDs, id)
@@ -180,7 +180,7 @@ func (r *ZeebeAutoscalerReconciler) ScaleZeebeBrokers(ctx context.Context, zeebe
 	return nil
 }
 
-func (r *ZeebeAutoscalerReconciler) ScaleStatefulSet(ctx context.Context, cr *camundav1alpha1.ZeebeAutoscaler) error {
+func (r *ZeebeAutoscalerReconciler) scaleStatefulSet(ctx context.Context, cr *camundav1alpha1.ZeebeAutoscaler) error {
 	sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
 		Name:      cr.Spec.ZeebeRef.Name,
 		Namespace: cr.Namespace}}
