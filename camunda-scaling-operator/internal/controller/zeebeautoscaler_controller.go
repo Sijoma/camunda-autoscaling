@@ -45,6 +45,8 @@ type ZeebeAutoscalerReconciler struct {
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/finalizers,verbs=update
 
+// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch
+
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=statefulsets/status,verbs=get
 // +kubebuilder:rbac:groups=apps,resources=statefulsets/scale,verbs=get;update
@@ -116,7 +118,7 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		if err := r.ScaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
-		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	if currentReplicas < desiredReplicas {
@@ -128,8 +130,8 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			return ctrl.Result{}, err
 		}
 
-		// We did everything -> lets reconcile again in 30 seconds
-		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+		// We did everything -> lets reconcile again in 5 seconds
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	} else if currentReplicas > desiredReplicas {
 		logger.Info("we are scaling down!⬇️")
 
@@ -137,7 +139,7 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		if err := r.ScaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
 			return ctrl.Result{}, err
 		}
-		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	// Refresh CR to prevent status update errors
