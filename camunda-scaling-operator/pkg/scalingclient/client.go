@@ -10,24 +10,23 @@ import (
 	"github.com/sijoma/camunda-scaling-operator/pkg/scalingclient/zbmgmt"
 )
 
-type zeebeMgmtClient struct {
+type ZeebeMgmtClient struct {
 	api *zbmgmt.APIClient
 }
 
 // Todo: Pass in options not a service
-func NewZeebeMgmtClient(gwSvc corev1.Service) *zeebeMgmtClient {
+func NewZeebeMgmtClient(gwSvc corev1.Service) *ZeebeMgmtClient {
 	cfg := zbmgmt.NewConfiguration()
 	cfg.Scheme = "http"
-	//cfg.Host = fmt.Sprintf("%s.%s:%d", gwSvc.Name, gwSvc.Namespace, gwSvc.Spec.Ports[0].Port)
-	cfg.Host = "localhost:9600"
+	cfg.Host = fmt.Sprintf("%s.%s:%d", gwSvc.Name, gwSvc.Namespace, gwSvc.Spec.Ports[0].Port)
 	api := zbmgmt.NewAPIClient(cfg)
-	zeebeClient := zeebeMgmtClient{
+	zeebeClient := ZeebeMgmtClient{
 		api,
 	}
 	return &zeebeClient
 }
 
-func (z zeebeMgmtClient) SendScaleRequest(ctx context.Context, brokerIds []int32) error {
+func (z ZeebeMgmtClient) SendScaleRequest(ctx context.Context, brokerIds []int32) error {
 	logger := log.FromContext(ctx)
 	operation, resp, err := z.api.DefaultAPI.BrokersPost(ctx).RequestBody(brokerIds).Execute()
 	if err != nil {
@@ -44,7 +43,7 @@ func (z zeebeMgmtClient) SendScaleRequest(ctx context.Context, brokerIds []int32
 	return nil
 }
 
-func (z zeebeMgmtClient) Topology(ctx context.Context) (*zbmgmt.GetTopologyResponse, error) {
+func (z ZeebeMgmtClient) Topology(ctx context.Context) (*zbmgmt.GetTopologyResponse, error) {
 	topology, resp, err := z.api.DefaultAPI.RootGet(ctx).Execute()
 	if err != nil {
 		return nil, err
