@@ -1,0 +1,14 @@
+inputSpec: cluster-api.yaml
+output: ./
+
+generatorName: go
+packageName: zbmgmt
+withGoMod: false
+
+gitUserId: sijoma
+gitRepoId: camunda-autoscaling-hackday
+
+validateSpec: true
+
+# Prevent similar names to clash
+enumClassPrefix: true

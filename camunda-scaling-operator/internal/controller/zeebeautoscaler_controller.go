@@ -36,6 +36,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	camundav1alpha1 "github.com/sijoma/camunda-scaling-operator/api/v1alpha1"
+	"github.com/sijoma/camunda-scaling-operator/pkg/zbmgmt"
 )
 
 // ZeebeAutoscalerReconciler reconciles a ZeebeAutoscaler object
@@ -167,6 +168,9 @@ func (r *ZeebeAutoscalerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 func sendScaleRequest(ctx context.Context, gwSvc corev1.Service, brokerIds []int32) error {
 	logger := log.FromContext(ctx)
 
+	cfg := zbmgmt.NewConfiguration()
+	api := zbmgmt.NewAPIClient(cfg)
+	api.DefaultAPI.BrokersPost(ctx).RequestBody()
 	url := fmt.Sprintf("http://%s.%s:%d/actuator/cluster/brokers", gwSvc.Name, gwSvc.Namespace, gwSvc.Spec.Ports[1].Port)
 
 	request, err := json.Marshal(brokerIds)
