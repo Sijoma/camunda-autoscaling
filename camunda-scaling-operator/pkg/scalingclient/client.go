@@ -7,7 +7,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	"github.com/sijoma/camunda-scaling-operator/pkg/zbmgmt"
+	"github.com/sijoma/camunda-scaling-operator/pkg/scalingclient/zbmgmt"
 )
 
 type zeebeMgmtClient struct {
@@ -29,7 +29,6 @@ func NewZeebeMgmtClient(gwSvc corev1.Service) *zeebeMgmtClient {
 
 func (z zeebeMgmtClient) SendScaleRequest(ctx context.Context, brokerIds []int32) error {
 	logger := log.FromContext(ctx)
-
 	operation, resp, err := z.api.DefaultAPI.BrokersPost(ctx).RequestBody(brokerIds).Execute()
 	if err != nil {
 		return nil

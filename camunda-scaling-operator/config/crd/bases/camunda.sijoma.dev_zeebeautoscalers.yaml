@@ -45,6 +45,8 @@ spec:
               zeebeRef:
                 description: ZeebeRef references that exists in the same namespace.
                 properties:
+                  gatewayServiceName:
+                    type: string
                   name:
                     description: Name of the Zeebe statefulset to scale
                     minLength: 1
