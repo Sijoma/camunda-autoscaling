@@ -32,7 +32,8 @@ type ZeebeAutoscalerSpec struct {
 type ZeebeRef struct {
 	// Name of the Zeebe statefulset to scale
 	// +kubebuilder:validation:MinLength=1
-	Name string `json:"name,omitempty"`
+	Name               string `json:"name,omitempty"`
+	GatewayServiceName string `json:"gatewayServiceName,omitempty"`
 }
 
 // ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler

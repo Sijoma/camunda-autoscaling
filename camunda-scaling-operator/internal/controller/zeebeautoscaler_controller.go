@@ -17,11 +17,17 @@ limitations under the License.
 package controller
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 	"time"
 
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -70,16 +76,23 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		Namespace: zeebeAutoscalerCR.Namespace,
 	}, &scaleTarget)
 	if err != nil {
-		// Should we actually continue to reconcile when the statefulset does not yet exist?
-		return ctrl.Result{}, client.IgnoreNotFound(err)
+		return ctrl.Result{}, err
 	}
 
+	// Todo: maybe check the topology
+	//currentTopology, err := QueryTopology(port)
+	//ensureNoError(err)
+	//if currentTopology.PendingChange != nil {
+	//	return fmt.Errorf("cluster is already scaling")
+	//}
+
 	// 2. check if it matches the desired replicas
+	// TODO: you cannot scale less than your replicationFactor
 	if scaleTarget.Spec.Replicas != zeebeAutoscalerCR.Spec.Replicas {
-		// Todo: Should we really use scale?
 		sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
 			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
 			Namespace: zeebeAutoscalerCR.Namespace}}
+
 		scale := &autoscalingv1.Scale{}
 		err = r.SubResource("scale").Get(ctx, sts, scale)
 		if err != nil {
@@ -91,8 +104,30 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			return ctrl.Result{}, err
 		}
 
-		// 3. Request change on broker
-		// Todo:
+		// 3. Request change to a gateway (only standalone gateway supported)
+		// Get GW service
+		gwSvc := corev1.Service{}
+		err = r.Get(ctx, types.NamespacedName{
+			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.GatewayServiceName,
+			Namespace: zeebeAutoscalerCR.Namespace,
+		}, &gwSvc)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+
+		// Make list of broker IDs
+		// Todo: get from state / cluster
+		brokerIDs := []int32{1, 3, 3}
+		// if no operation ongoing: Call send scale request
+		err = sendScaleRequest(ctx, gwSvc, brokerIDs)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+
+		// if operation ongoing: Get current status
+
+		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+
 	}
 
 	// Refresh CR to prevent status update errors
@@ -127,4 +162,38 @@ func (r *ZeebeAutoscalerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&camundav1alpha1.ZeebeAutoscaler{}).
 		Complete(r)
+}
+
+func sendScaleRequest(ctx context.Context, gwSvc corev1.Service, brokerIds []int32) error {
+	logger := log.FromContext(ctx)
+
+	url := fmt.Sprintf("http://%s.%s:%d/actuator/cluster/brokers", gwSvc.Name, gwSvc.Namespace, gwSvc.Spec.Ports[1].Port)
+
+	request, err := json.Marshal(brokerIds)
+	if err != nil {
+		return err
+	}
+	resp, err := http.Post(url, "application/json", bytes.NewReader(request))
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+		return fmt.Errorf("sendScaleRequest: scaling failed with code %d", resp.StatusCode)
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	logger.Info("sendScaleRequest: scaling succeeded", respBody)
+
+	//var changeResponse ChangeResponse
+	//err = json.Unmarshal(response, &changeResponse)
+	//if err != nil {
+	//	return nil, err
+	//}
+	return nil
 }
