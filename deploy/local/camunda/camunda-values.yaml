@@ -36,6 +36,17 @@ zeebe:
   image:
     tag: 8.5.3
 
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: "app.kubernetes.io/component"
+                operator: In
+                values:
+                  - blabla
+          topologyKey: "kubernetes.io/hostname"
+
 zeebeGateway:
   replicas: 1
   # https://hub.docker.com/r/camunda/zeebe/tags
