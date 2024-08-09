@@ -122,17 +122,26 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	}
 
 	if currentReplicas < desiredReplicas {
-		logger.Info("We are scaling up! ⬆️️")
+		logger.Info("We are scaling stateful set up! ⬆️️")
 		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
+
+		// re-enqueue until the stateful set is scaled UP
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	}
+
+	if len(topology.Brokers) < int(currentReplicas) {
+		logger.Info("We are scaling topology up! ⬆️️")
 		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
 			return ctrl.Result{}, err
 		}
 
-		// We did everything -> lets reconcile again in 5 seconds
+		// re-enqueue until the topology is scaled UP
 		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
-	} else if currentReplicas > desiredReplicas {
+	}
+
+	if currentReplicas > desiredReplicas {
 		logger.Info("we are scaling down!⬇️")
 
 		// we didnt yet request that Zeebe should scale down
