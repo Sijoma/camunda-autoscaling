@@ -43,3 +43,38 @@ kubectl scale zeebeautoscalers.camunda.sijoma.dev camunda-platform-zeebe --names
 ```bash
 kubectl scale zeebeautoscalers.camunda.sijoma.dev camunda-platform-zeebe --namespace camunda-platform  --replicas 3
 ```
+
+### Autoscaling - based on Prometheus metrics
+
+This requires a proper [Prometheus](https://prometheus.io) & [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) setup. 
+
+If you want to learn more about this the following article may help to understand the basics: https://learnk8s.io/autoscaling-apps-kubernetes
+
+```yaml 
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: camunda-hpa
+  namespace: camunda-platform
+spec:
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 0
+  minReplicas: 3
+  maxReplicas: 6
+  metrics:
+    - type: Pods
+      pods:
+        # TODO: find a proper metric
+        metric:
+          name: zeebe_backpressure_inflight_requests_count
+        # TODO: find a proper target
+        target:
+          type: AverageValue
+          averageValue: "50"
+  scaleTargetRef:
+    apiVersion: camunda.sijoma.dev/v1alpha1
+    kind: ZeebeAutoscaler
+    name: camunda-platform-zeebe
+
+```
