@@ -1,0 +1,24 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: camunda-hpa
+  namespace: camunda-platform
+spec:
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 0
+  minReplicas: 3
+  maxReplicas: 6
+  metrics:
+    - type: Pods
+      pods:
+        # TODO: find a proper metric
+        metric:
+          name: zeebe_backpressure_inflight_requests_count
+        target:
+          type: AverageValue
+          averageValue: "50"
+  scaleTargetRef:
+    apiVersion: camunda.sijoma.dev/v1alpha1
+    kind: ZeebeAutoscaler
+    name: camunda-platform-zeebe

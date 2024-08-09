@@ -1,0 +1,10 @@
+apiVersion: camunda.sijoma.dev/v1alpha1
+kind: ZeebeAutoscaler
+metadata:
+  name: camunda-platform-zeebe
+  namespace: camunda-platform
+spec:
+  replicas: 3
+  zeebeRef:
+    # This is the StatefulSet name of Zeebe
+    name: camunda-platform-zeebe
