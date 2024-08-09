@@ -17,4 +17,13 @@ resources:
   kind: ZeebeAutoscaler
   path: github.com/sijoma/camunda-scaling-operator/api/v1alpha1
   version: v1alpha1
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: sijoma.dev
+  group: camunda
+  kind: ZeebePartitionAutoscaler
+  path: github.com/sijoma/camunda-scaling-operator/api/v1alpha1
+  version: v1alpha1
 version: "3"

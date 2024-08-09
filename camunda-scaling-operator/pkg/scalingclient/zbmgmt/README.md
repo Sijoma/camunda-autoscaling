@@ -80,6 +80,7 @@ Class | Method | HTTP request | Description
 *DefaultAPI* | [**BrokersBrokerIdDelete**](docs/DefaultAPI.md#brokersbrokeriddelete) | **Delete** /brokers/{brokerId} | Remove a broker from the cluster.
 *DefaultAPI* | [**BrokersBrokerIdPost**](docs/DefaultAPI.md#brokersbrokeridpost) | **Post** /brokers/{brokerId} | Add a broker to the cluster
 *DefaultAPI* | [**BrokersPost**](docs/DefaultAPI.md#brokerspost) | **Post** /brokers | Reconfigure the cluster with the given brokers.
+*DefaultAPI* | [**PartitionsPost**](docs/DefaultAPI.md#partitionspost) | **Post** /partitions | Increase partition count.
 *DefaultAPI* | [**RootGet**](docs/DefaultAPI.md#rootget) | **Get** / | Get current topology
 
 

@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .travis.yml
 README.md
 api/openapi.yaml
@@ -39,5 +38,4 @@ model_planned_operations_response.go
 model_topology_change.go
 model_topology_change_completed_inner.go
 response.go
-test/api_default_test.go
 utils.go

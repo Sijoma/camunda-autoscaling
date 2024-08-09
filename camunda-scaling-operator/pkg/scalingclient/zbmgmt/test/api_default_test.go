@@ -11,12 +11,10 @@ package zbmgmt
 
 import (
 	"context"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-
-	openapiclient "github.com/sijoma/camunda-scaling-operator/pkg/scalingclient/zbmgmt"
+	"testing"
+	openapiclient "github.com/sijoma/camunda-autoscaling-hackday"
 )
 
 func Test_zbmgmt_DefaultAPIService(t *testing.T) {
@@ -26,7 +24,7 @@ func Test_zbmgmt_DefaultAPIService(t *testing.T) {
 
 	t.Run("Test DefaultAPIService BrokersBrokerIdDelete", func(t *testing.T) {
 
-		t.Skip("skip test") // remove to run test
+		t.Skip("skip test")  // remove to run test
 
 		var brokerId int32
 
@@ -40,7 +38,7 @@ func Test_zbmgmt_DefaultAPIService(t *testing.T) {
 
 	t.Run("Test DefaultAPIService BrokersBrokerIdPost", func(t *testing.T) {
 
-		t.Skip("skip test") // remove to run test
+		t.Skip("skip test")  // remove to run test
 
 		var brokerId int32
 
@@ -54,7 +52,7 @@ func Test_zbmgmt_DefaultAPIService(t *testing.T) {
 
 	t.Run("Test DefaultAPIService BrokersPost", func(t *testing.T) {
 
-		t.Skip("skip test") // remove to run test
+		t.Skip("skip test")  // remove to run test
 
 		resp, httpRes, err := apiClient.DefaultAPI.BrokersPost(context.Background()).Execute()
 
@@ -64,9 +62,20 @@ func Test_zbmgmt_DefaultAPIService(t *testing.T) {
 
 	})
 
+	t.Run("Test DefaultAPIService PartitionsPost", func(t *testing.T) {
+
+		t.Skip("skip test")  // remove to run test
+
+		httpRes, err := apiClient.DefaultAPI.PartitionsPost(context.Background()).Execute()
+
+		require.Nil(t, err)
+		assert.Equal(t, 200, httpRes.StatusCode)
+
+	})
+
 	t.Run("Test DefaultAPIService RootGet", func(t *testing.T) {
 
-		t.Skip("skip test") // remove to run test
+		t.Skip("skip test")  // remove to run test
 
 		resp, httpRes, err := apiClient.DefaultAPI.RootGet(context.Background()).Execute()
 

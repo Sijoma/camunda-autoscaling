@@ -16,6 +16,31 @@ servers:
         default: http
         description: Management server schema
 paths:
+  /partitions:
+    post:
+      summary: Increase partition count.
+      description: Increases the partition count, cannot be rollbacked.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+      responses:
+        '204':
+          description: "Successfully added the partition"
+        '400':
+          $ref: 'components.yaml#/responses/InvalidRequest'
+        '409':
+          $ref: 'components.yaml#/responses/ConcurrentChangeError'
+        '500':
+          $ref: 'components.yaml#/responses/InternalError'
+        '502':
+          $ref: 'components.yaml#/responses/GatewayError'
+        '504':
+          $ref: 'components.yaml#/responses/TimeoutError'
   /brokers/{brokerId}:
     post:
       summary: Add a broker to the cluster

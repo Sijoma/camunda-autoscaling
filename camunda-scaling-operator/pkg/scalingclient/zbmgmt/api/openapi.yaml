@@ -16,6 +16,51 @@ servers:
       default: http
       description: Management server schema
 paths:
+  /partitions:
+    post:
+      description: "Increases the partition count, cannot be rollbacked."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              items:
+                type: integer
+              type: array
+        required: true
+      responses:
+        "204":
+          description: Successfully added the partition
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Invalid request.
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Failed to accept request. Another topology change is in progress.
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Internal error
+        "502":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Gateway failed to send request to the broker.
+        "504":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+          description: Request from gateway to broker timed out.
+      summary: Increase partition count.
   /brokers/{brokerId}:
     delete:
       description: Remove a broker with the given brokerId from the cluster. The broker
@@ -348,6 +393,15 @@ components:
             $ref: '#/components/schemas/Error'
       description: Request from gateway to broker timed out.
   schemas:
+    Error:
+      description: Generic response for all errors
+      properties:
+        message:
+          description: Error message
+          example: something failed
+          type: string
+      title: Error response
+      type: object
     BrokerId:
       description: "The ID of a broker, starting from 0"
       example: 0
@@ -717,15 +771,6 @@ components:
           example: my-exporter
           title: Exporter
           type: string
-      type: object
-    Error:
-      description: Generic response for all errors
-      properties:
-        message:
-          description: Error message
-          example: something failed
-          type: string
-      title: Error response
       type: object
     ScaleRequest:
       description: Request body for changing the cluster topology
