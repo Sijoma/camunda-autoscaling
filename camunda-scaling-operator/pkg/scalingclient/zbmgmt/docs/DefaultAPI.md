@@ -7,6 +7,7 @@ Method | HTTP request | Description
 [**BrokersBrokerIdDelete**](DefaultAPI.md#BrokersBrokerIdDelete) | **Delete** /brokers/{brokerId} | Remove a broker from the cluster.
 [**BrokersBrokerIdPost**](DefaultAPI.md#BrokersBrokerIdPost) | **Post** /brokers/{brokerId} | Add a broker to the cluster
 [**BrokersPost**](DefaultAPI.md#BrokersPost) | **Post** /brokers | Reconfigure the cluster with the given brokers.
+[**PartitionsPost**](DefaultAPI.md#PartitionsPost) | **Post** /partitions | Increase partition count.
 [**RootGet**](DefaultAPI.md#RootGet) | **Get** / | Get current topology
 
 
@@ -221,6 +222,70 @@ No authorization required
 
 - **Content-Type**: application/json
 - **Accept**: application.json, application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
+[[Back to Model list]](../README.md#documentation-for-models)
+[[Back to README]](../README.md)
+
+
+## PartitionsPost
+
+> PartitionsPost(ctx).RequestBody(requestBody).Execute()
+
+Increase partition count.
+
+
+
+### Example
+
+```go
+package main
+
+import (
+    "context"
+    "fmt"
+    "os"
+    openapiclient "github.com/sijoma/camunda-autoscaling-hackday"
+)
+
+func main() {
+    requestBody := []int32{int32(123)} // []int32 | 
+
+    configuration := openapiclient.NewConfiguration()
+    apiClient := openapiclient.NewAPIClient(configuration)
+    r, err := apiClient.DefaultAPI.PartitionsPost(context.Background()).RequestBody(requestBody).Execute()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error when calling `DefaultAPI.PartitionsPost``: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Full HTTP response: %v\n", r)
+    }
+}
+```
+
+### Path Parameters
+
+
+
+### Other Parameters
+
+Other parameters are passed through a pointer to a apiPartitionsPostRequest struct via the builder pattern
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **requestBody** | **[]int32** |  | 
+
+### Return type
+
+ (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints)
 [[Back to Model list]](../README.md#documentation-for-models)

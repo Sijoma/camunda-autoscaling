@@ -11,6 +11,7 @@ $(OPENAPI_SPEC_FILE):
 	curl https://raw.githubusercontent.com/camunda/camunda/main/dist/src/main/resources/api/cluster/components.yaml  > components.yaml
 
 
+
 clean:
 	cat .openapi-generator/FILES | xargs rm -f
 

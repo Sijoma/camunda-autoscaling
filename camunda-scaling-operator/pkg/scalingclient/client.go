@@ -3,6 +3,7 @@ package scalingclient
 import (
 	"context"
 	"fmt"
+	"io"
 
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -39,6 +40,28 @@ func (z ZeebeMgmtClient) SendScaleRequest(ctx context.Context, brokerIds []int32
 	}
 
 	logger.Info("sendScaleRequest: scaling succeeded", "changeId", operation.ChangeId)
+
+	return nil
+}
+
+func (z ZeebeMgmtClient) SendScalePartitionRequest(ctx context.Context, partitionCount int32) error {
+	logger := log.FromContext(ctx)
+	body := []int32{partitionCount}
+	resp, err := z.api.DefaultAPI.PartitionsPost(ctx).RequestBody(body).Execute()
+	if err != nil {
+		return nil
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+		}
+	}(resp.Body)
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 400 {
+		return fmt.Errorf("sendScalePartitionsRequest: scaling failed with code %d", resp.StatusCode)
+	}
+
+	logger.Info("sendScalePartitionsRequest: scaling succeeded", "partitionCount", partitionCount)
 
 	return nil
 }

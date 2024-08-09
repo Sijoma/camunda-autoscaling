@@ -56,6 +56,32 @@ rules:
   - patch
   - update
 - apiGroups:
+  - camunda.sijoma.dev
+  resources:
+  - zeebepartitionautoscalers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - camunda.sijoma.dev
+  resources:
+  - zeebepartitionautoscalers/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - camunda.sijoma.dev
+  resources:
+  - zeebepartitionautoscalers/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
   - ""
   resources:
   - services
