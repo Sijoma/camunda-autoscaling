@@ -45,6 +45,8 @@ type ZeebeAutoscalerReconciler struct {
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=camunda.sijoma.dev,resources=zeebeautoscalers/finalizers,verbs=update
 
+// +kubebuilder:rbac:groups=core,resources=services,verbs=get;list;watch
+
 // +kubebuilder:rbac:groups=apps,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=apps,resources=statefulsets/status,verbs=get
 // +kubebuilder:rbac:groups=apps,resources=statefulsets/scale,verbs=get;update
@@ -64,7 +66,8 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		// do not requeue "not found" errors
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
-	logger.Info("starting reconcile", "name", zeebeAutoscalerCR.Name)
+	logger = logger.WithValues("name", zeebeAutoscalerCR.Name, "namespace", zeebeAutoscalerCR.Namespace)
+	logger.Info("starting reconcile")
 
 	// 1. Lookup statefulset
 	var scaleTarget appsv1.StatefulSet
@@ -87,53 +90,56 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, err
 	}
 
-	// 3. Create client
+	// Prepare ZeebeClient
 	zeebeClient := scalingclient.NewZeebeMgmtClient(gwSvc)
 
-	// Todo: maybe check the topology
+	// Check topology
 	topology, err := zeebeClient.Topology(ctx)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
+
+	// Check if change is already pending
 	if topology.HasPendingChange() {
 		logger.Info("cluster scaling in progress", "topology", topology.PendingChange.Status)
 		// Todo: update status
 		return ctrl.Result{}, fmt.Errorf("cluster scaling in progress")
 	}
 
-	// 2. check if it matches the desired replicas
+	// 2. check if we need to downscale / upscale
+	// (https://docs.camunda.io/docs/next/self-managed/zeebe-deployment/operations/cluster-scaling/)
 	currentReplicas := *scaleTarget.Spec.Replicas
 	desiredReplicas := *zeebeAutoscalerCR.Spec.Replicas
-	if currentReplicas != desiredReplicas {
-		// TODO: Do Zeebe CALL first when scaling down and vice versa
-		sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
-			Name:      zeebeAutoscalerCR.Spec.ZeebeRef.Name,
-			Namespace: zeebeAutoscalerCR.Namespace}}
+	logger = logger.WithValues("currentReplicas", currentReplicas, "desiredReplicas", desiredReplicas)
 
-		scale := &autoscalingv1.Scale{}
-		err = r.SubResource("scale").Get(ctx, sts, scale)
-		if err != nil {
+	// Check if we already scaled down brokers, if so, we can scale down the statefulset
+	// In words: "we are downscaling" && the zeebe topology has already removed the broker
+	if currentReplicas > desiredReplicas && len(topology.Brokers) < int(currentReplicas) {
+		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
-		scale = &autoscalingv1.Scale{Spec: autoscalingv1.ScaleSpec{Replicas: *zeebeAutoscalerCR.Spec.Replicas}}
-		err = r.SubResource("scale").Update(ctx, sts, client.WithSubResourceBody(scale))
-		if err != nil {
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	}
+
+	if currentReplicas < desiredReplicas {
+		logger.Info("We are scaling up! ⬆️️")
+		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
 			return ctrl.Result{}, err
 		}
-
-		// We have the current brokerIDs
-		// Todo append new ones?
-		desiredBrokerIDs := make([]int32, 0, desiredReplicas)
-		for id := range desiredReplicas {
-			desiredBrokerIDs = append(desiredBrokerIDs, id)
-		}
-
-		err = zeebeClient.SendScaleRequest(ctx, desiredBrokerIDs)
-		if err != nil {
+		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
 			return ctrl.Result{}, err
 		}
 
-		return ctrl.Result{RequeueAfter: time.Second * 30}, nil
+		// We did everything -> lets reconcile again in 5 seconds
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	} else if currentReplicas > desiredReplicas {
+		logger.Info("we are scaling down!⬇️")
+
+		// we didnt yet request that Zeebe should scale down
+		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 	}
 
 	// Refresh CR to prevent status update errors
@@ -159,6 +165,32 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	logger.Info("reconcile success", "name", zeebeAutoscalerCR.Name)
 
 	return ctrl.Result{}, nil
+}
+
+func (r *ZeebeAutoscalerReconciler) scaleZeebeBrokers(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) error {
+	desiredBrokerIDs := make([]int32, 0, desiredReplicas)
+	for id := range desiredReplicas {
+		desiredBrokerIDs = append(desiredBrokerIDs, id)
+	}
+
+	err := zeebeClient.SendScaleRequest(ctx, desiredBrokerIDs)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *ZeebeAutoscalerReconciler) scaleStatefulSet(ctx context.Context, cr *camundav1alpha1.ZeebeAutoscaler) error {
+	sts := &appsv1.StatefulSet{ObjectMeta: metav1.ObjectMeta{
+		Name:      cr.Spec.ZeebeRef.Name,
+		Namespace: cr.Namespace}}
+
+	scale := &autoscalingv1.Scale{Spec: autoscalingv1.ScaleSpec{Replicas: *cr.Spec.Replicas}}
+	err := r.SubResource("scale").Update(ctx, sts, client.WithSubResourceBody(scale))
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
