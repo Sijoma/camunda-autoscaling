@@ -5,8 +5,10 @@ namespace: camunda-platform
 
 resources:
   - namespace.yaml
-  - camunda_v1alpha1_zeebeautoscaler.yaml
-  - zeebe-svc-monitor.yaml
+# Only enable if you have the camunda-scaling-operator installed
+#  - camunda_v1alpha1_zeebeautoscaler.yaml
+# Only enable if you have prometheus installed
+#  - zeebe-svc-monitor.yaml
 
 generators:
   - camunda-chart.yaml
