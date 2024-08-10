@@ -3,6 +3,7 @@ package scalingclient
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -41,7 +42,7 @@ func NewZeebeMgmtClient(opts ...func(*zbmgmt.Configuration)) *ZeebeMgmtClient {
 	cfg.Scheme = "http"
 	// API calls inside the reconcile loop should not block too long
 	// (we still only have 1 worker so no concurrency of the loop)
-	cfg.HTTPClient.Timeout = time.Second * 15
+	cfg.HTTPClient = &http.Client{Timeout: time.Second * 15}
 
 	for _, option := range opts {
 		option(cfg)
