@@ -32,8 +32,15 @@ type ZeebeAutoscalerSpec struct {
 type ZeebeRef struct {
 	// Name of the Zeebe statefulset to scale
 	// +kubebuilder:validation:MinLength=1
-	Name               string `json:"name,omitempty"`
-	GatewayServiceName string `json:"gatewayServiceName,omitempty"`
+	Name    string  `json:"name,omitempty"`
+	Gateway Gateway `json:"gateway"`
+}
+
+type Gateway struct {
+	// +kubebuilder:default=camunda-platform-zeebe-gateway
+	ServiceName string `json:"serviceName,omitempty"`
+	// +kubebuilder:default=9600
+	Port int32 `json:"port,omitempty"`
 }
 
 // ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler

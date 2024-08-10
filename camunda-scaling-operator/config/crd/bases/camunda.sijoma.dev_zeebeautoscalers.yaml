@@ -45,12 +45,22 @@ spec:
               zeebeRef:
                 description: ZeebeRef references that exists in the same namespace.
                 properties:
-                  gatewayServiceName:
-                    type: string
+                  gateway:
+                    properties:
+                      port:
+                        default: 9600
+                        format: int32
+                        type: integer
+                      serviceName:
+                        default: camunda-platform-zeebe-gateway
+                        type: string
+                    type: object
                   name:
                     description: Name of the Zeebe statefulset to scale
                     minLength: 1
                     type: string
+                required:
+                - gateway
                 type: object
             required:
             - zeebeRef

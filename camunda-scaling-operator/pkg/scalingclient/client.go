@@ -3,6 +3,7 @@ package scalingclient
 import (
 	"context"
 	"fmt"
+	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -14,11 +15,38 @@ type ZeebeMgmtClient struct {
 	api *zbmgmt.APIClient
 }
 
-// Todo: Pass in options not a service
-func NewZeebeMgmtClient(gwSvc corev1.Service) *ZeebeMgmtClient {
+// WithServiceHost
+// Todo: This should be specified in the CRD unfortunately... too many inputs and magic lookup stuff
+func WithServiceHost(svc corev1.Service, port int32) func(cfg *zbmgmt.Configuration) {
+	return func(cfg *zbmgmt.Configuration) {
+		cfg.Host = fmt.Sprintf("%s.%s:%d", svc.Name, svc.Namespace, port)
+	}
+}
+
+// WithHost allows to specify a host, this is useful for local development / port-forwarding scenarios
+func WithHost(host string) func(cfg *zbmgmt.Configuration) {
+	return func(cfg *zbmgmt.Configuration) {
+		cfg.Host = host
+	}
+}
+
+func WithTimeout(timeout time.Duration) func(cfg *zbmgmt.Configuration) {
+	return func(cfg *zbmgmt.Configuration) {
+		cfg.HTTPClient.Timeout = timeout
+	}
+}
+
+func NewZeebeMgmtClient(opts ...func(*zbmgmt.Configuration)) *ZeebeMgmtClient {
 	cfg := zbmgmt.NewConfiguration()
 	cfg.Scheme = "http"
-	cfg.Host = fmt.Sprintf("%s.%s:%d", gwSvc.Name, gwSvc.Namespace, gwSvc.Spec.Ports[0].Port)
+	// API calls inside the reconcile loop should not block too long
+	// (we still only have 1 worker so no concurrency of the loop)
+	cfg.HTTPClient.Timeout = time.Second * 15
+
+	for _, option := range opts {
+		option(cfg)
+	}
+
 	api := zbmgmt.NewAPIClient(cfg)
 	zeebeClient := ZeebeMgmtClient{
 		api,
