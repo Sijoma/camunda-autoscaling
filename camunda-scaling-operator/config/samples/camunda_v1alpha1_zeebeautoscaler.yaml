@@ -5,5 +5,3 @@ metadata:
   namespace: camunda-platform
 spec:
   replicas: 3
-  zeebeRef:
-    name: camunda-platform-zeebe

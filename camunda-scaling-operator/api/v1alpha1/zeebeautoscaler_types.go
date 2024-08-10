@@ -25,15 +25,16 @@ type ZeebeAutoscalerSpec struct {
 	Replicas *int32 `json:"replicas,omitempty"`
 
 	// +kubebuilder:validation:Required
-	ZeebeRef ZeebeRef `json:"zeebeRef"`
+	ZeebeRef ZeebeRef `json:"zeebeRef,omitempty"`
 }
 
 // ZeebeRef references that exists in the same namespace.
 type ZeebeRef struct {
 	// Name of the Zeebe statefulset to scale
 	// +kubebuilder:validation:MinLength=1
+	// +kubebuilder:default=camunda-platform-zeebe
 	Name    string  `json:"name,omitempty"`
-	Gateway Gateway `json:"gateway"`
+	Gateway Gateway `json:"gateway,omitempty"`
 }
 
 type Gateway struct {

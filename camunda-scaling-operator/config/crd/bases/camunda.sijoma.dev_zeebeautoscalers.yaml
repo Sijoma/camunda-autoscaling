@@ -56,14 +56,11 @@ spec:
                         type: string
                     type: object
                   name:
+                    default: camunda-platform-zeebe
                     description: Name of the Zeebe statefulset to scale
                     minLength: 1
                     type: string
-                required:
-                - gateway
                 type: object
-            required:
-            - zeebeRef
             type: object
           status:
             description: ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler
