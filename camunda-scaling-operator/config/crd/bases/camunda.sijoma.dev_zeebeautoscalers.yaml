@@ -43,17 +43,26 @@ spec:
                 format: int32
                 type: integer
               zeebeRef:
+                default:
+                  gateway:
+                    port: 9600
+                    serviceName: camunda-platform-zeebe-gateway
+                  name: camunda-platform-zeebe
                 description: ZeebeRef references that exists in the same namespace.
                 properties:
-                  gatewayServiceName:
-                    type: string
+                  gateway:
+                    properties:
+                      port:
+                        format: int32
+                        type: integer
+                      serviceName:
+                        type: string
+                    type: object
                   name:
                     description: Name of the Zeebe statefulset to scale
                     minLength: 1
                     type: string
                 type: object
-            required:
-            - zeebeRef
             type: object
           status:
             description: ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler

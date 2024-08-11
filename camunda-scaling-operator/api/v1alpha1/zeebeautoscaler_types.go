@@ -24,16 +24,21 @@ import (
 type ZeebeAutoscalerSpec struct {
 	Replicas *int32 `json:"replicas,omitempty"`
 
-	// +kubebuilder:validation:Required
-	ZeebeRef ZeebeRef `json:"zeebeRef"`
+	// +kubebuilder:default={name:camunda-platform-zeebe,gateway:{serviceName:camunda-platform-zeebe-gateway,port:9600}}
+	ZeebeRef ZeebeRef `json:"zeebeRef,omitempty"`
 }
 
 // ZeebeRef references that exists in the same namespace.
 type ZeebeRef struct {
 	// Name of the Zeebe statefulset to scale
 	// +kubebuilder:validation:MinLength=1
-	Name               string `json:"name,omitempty"`
-	GatewayServiceName string `json:"gatewayServiceName,omitempty"`
+	Name    string  `json:"name,omitempty"`
+	Gateway Gateway `json:"gateway,omitempty"`
+}
+
+type Gateway struct {
+	ServiceName string `json:"serviceName,omitempty"`
+	Port        int32  `json:"port,omitempty"`
 }
 
 // ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler

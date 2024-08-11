@@ -23,7 +23,6 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
-	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -79,19 +78,12 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, err
 	}
 
-	// 2. Lookup zeebe-gateway
-	gwSvc := corev1.Service{}
-	err = r.Get(ctx, types.NamespacedName{
-		//Name:      zeebeAutoscalerCR.Spec.ZeebeRef.GatewayServiceName,
-		Namespace: zeebeAutoscalerCR.Namespace,
-		Name:      "camunda-platform-zeebe-gateway",
-	}, &gwSvc)
-	if err != nil {
-		return ctrl.Result{}, err
-	}
-
 	// Prepare ZeebeClient
-	zeebeClient := scalingclient.NewZeebeMgmtClient(gwSvc)
+	gw := zeebeAutoscalerCR.Spec.ZeebeRef.Gateway
+	host := fmt.Sprintf("%s.%s:%d", gw.ServiceName, zeebeAutoscalerCR.Namespace, gw.Port)
+	zeebeClient := scalingclient.NewZeebeMgmtClient(
+		scalingclient.WithHost(host),
+	)
 
 	// Check topology
 	topology, err := zeebeClient.Topology(ctx)
