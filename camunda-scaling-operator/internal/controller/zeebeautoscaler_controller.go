@@ -100,47 +100,34 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 	// 2. check if we need to downscale / upscale
 	// (https://docs.camunda.io/docs/next/self-managed/zeebe-deployment/operations/cluster-scaling/)
-	currentReplicas := *scaleTarget.Spec.Replicas
+	stsReplicas := *scaleTarget.Spec.Replicas
 	desiredReplicas := *zeebeAutoscalerCR.Spec.Replicas
-	logger = logger.WithValues("currentReplicas", currentReplicas, "desiredReplicas", desiredReplicas)
+	logger = logger.WithValues("stsReplicas", stsReplicas, "desiredReplicas", desiredReplicas)
+
+	lessZeebeBrokersThanReplicas := len(topology.Brokers) < int(stsReplicas)
+	moreStsReplicasThanDesired := stsReplicas > desiredReplicas
+	lessStsReplicasThanDesired := stsReplicas < desiredReplicas
 
 	// Check if we already scaled down brokers, if so, we can scale down the statefulset
 	// In words: "we are downscaling" && the zeebe topology has already removed the broker
-	if currentReplicas > desiredReplicas && len(topology.Brokers) < int(currentReplicas) {
-		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	if moreStsReplicasThanDesired && lessZeebeBrokersThanReplicas {
+		logger.Info("We are continuing to downscale!⬇️")
+		return r.continueScaleDown(ctx, zeebeAutoscalerCR)
 	}
 
-	if currentReplicas < desiredReplicas {
+	if lessStsReplicasThanDesired {
 		logger.Info("We are scaling stateful set up! ⬆️️")
-		if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
-			return ctrl.Result{}, err
-		}
-
-		// re-enqueue until the stateful set is scaled UP
-		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+		return r.startScaleUp(ctx, zeebeAutoscalerCR)
 	}
 
-	if len(topology.Brokers) < int(currentReplicas) {
+	if lessZeebeBrokersThanReplicas {
 		logger.Info("We are scaling topology up! ⬆️️")
-		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
-			return ctrl.Result{}, err
-		}
-
-		// re-enqueue until the topology is scaled UP
-		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+		return r.continueScaleUp(ctx, zeebeClient, desiredReplicas)
 	}
 
-	if currentReplicas > desiredReplicas {
-		logger.Info("we are scaling down!⬇️")
-
-		// we didnt yet request that Zeebe should scale down
-		if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+	if moreStsReplicasThanDesired {
+		logger.Info("We are scaling down!⬇️")
+		return r.startScaleDown(ctx, zeebeClient, desiredReplicas)
 	}
 
 	// Refresh CR to prevent status update errors
@@ -166,6 +153,39 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	logger.Info("reconcile success", "name", zeebeAutoscalerCR.Name)
 
 	return ctrl.Result{}, nil
+}
+
+func (r *ZeebeAutoscalerReconciler) startScaleUp(ctx context.Context, zeebeAutoscalerCR *camundav1alpha1.ZeebeAutoscaler) (ctrl.Result, error) {
+	if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// re-enqueue until the stateful set is scaled UP
+	return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+}
+
+func (r *ZeebeAutoscalerReconciler) continueScaleUp(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) (ctrl.Result, error) {
+	if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// re-enqueue until the topology is scaled UP
+	return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+}
+
+func (r *ZeebeAutoscalerReconciler) startScaleDown(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) (ctrl.Result, error) {
+	// we didnt yet request that Zeebe should scale down
+	if err := r.scaleZeebeBrokers(ctx, zeebeClient, desiredReplicas); err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{RequeueAfter: time.Second * 5}, nil
+}
+
+func (r *ZeebeAutoscalerReconciler) continueScaleDown(ctx context.Context, zeebeAutoscalerCR *camundav1alpha1.ZeebeAutoscaler) (ctrl.Result, error) {
+	if err := r.scaleStatefulSet(ctx, zeebeAutoscalerCR); err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{RequeueAfter: time.Second * 5}, nil
 }
 
 func (r *ZeebeAutoscalerReconciler) scaleZeebeBrokers(ctx context.Context, zeebeClient *scalingclient.ZeebeMgmtClient, desiredReplicas int32) error {
