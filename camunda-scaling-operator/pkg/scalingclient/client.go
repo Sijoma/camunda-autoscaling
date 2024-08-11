@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"time"
 
-	corev1 "k8s.io/api/core/v1"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/sijoma/camunda-scaling-operator/pkg/scalingclient/zbmgmt"
@@ -14,14 +13,6 @@ import (
 
 type ZeebeMgmtClient struct {
 	api *zbmgmt.APIClient
-}
-
-// WithServiceHost
-// Todo: This should be specified in the CRD unfortunately... too many inputs and magic lookup stuff
-func WithServiceHost(svc corev1.Service, port int32) func(cfg *zbmgmt.Configuration) {
-	return func(cfg *zbmgmt.Configuration) {
-		cfg.Host = fmt.Sprintf("%s.%s:%d", svc.Name, svc.Namespace, port)
-	}
 }
 
 // WithHost allows to specify a host, this is useful for local development / port-forwarding scenarios
