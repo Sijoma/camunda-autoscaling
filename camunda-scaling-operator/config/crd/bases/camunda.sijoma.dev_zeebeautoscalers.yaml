@@ -14,7 +14,14 @@ spec:
     singular: zeebeautoscaler
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - jsonPath: .status.conditions[?(@.type=='ReadyToScale')].status
+      name: Ready To Scale
+      type: string
+    - jsonPath: .spec.zeebeRef.name
+      name: Target
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: ZeebeAutoscaler is the Schema for the zeebeautoscalers API
