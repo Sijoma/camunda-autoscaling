@@ -16,3 +16,11 @@ undeploy-camunda:
 
 teardown:
 	kind delete cluster --name hackdays
+
+### Demo stuff
+
+build-demo-starter:
+	docker build -t "gcr.io/zeebe-io/starter:autoscaling-demo" -f demo/starter.Dockerfile ./demo/
+
+build-demo-worker:
+	docker build -t "gcr.io/zeebe-io/starter:autoscaling-demo" -f demo/starter.Dockerfile ./demo/
