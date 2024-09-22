@@ -4,6 +4,8 @@ The demo will deploy the [sign-up-process.bpmn](./sign-up-process.bpmn) process,
 premiere German cooking streaming service, Mettflix. This project provides deployment files to set up and operate the 
 demo application - _not the C8 cluster!_
 
+![sign-up-process](./sign-up-process.png)
+
 ## Pre-requisites
 
 The demo application reuses building blocks from the [camunda/camunda](https://github.com/camunda/camunda) repository,
