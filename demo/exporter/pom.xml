@@ -190,7 +190,7 @@
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
               <finalName>job-metric-exporter-uber</finalName>
-              <minimizeJar>true</minimizeJar>
+              <minimizeJar>false</minimizeJar>
             </configuration>
           </execution>
         </executions>

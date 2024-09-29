@@ -6,6 +6,8 @@ import io.camunda.zeebe.exporter.api.Exporter;
 import io.camunda.zeebe.exporter.api.context.Context;
 import io.camunda.zeebe.exporter.api.context.Controller;
 import io.camunda.zeebe.protocol.record.Record;
+import io.camunda.zeebe.protocol.record.RecordType;
+import io.camunda.zeebe.protocol.record.ValueType;
 import io.camunda.zeebe.protocol.record.intent.IncidentIntent;
 import io.camunda.zeebe.protocol.record.intent.JobBatchIntent;
 import io.camunda.zeebe.protocol.record.intent.JobIntent;
@@ -13,8 +15,13 @@ import io.camunda.zeebe.protocol.record.value.IncidentRecordValue;
 import io.camunda.zeebe.protocol.record.value.JobBatchRecordValue;
 import io.camunda.zeebe.protocol.record.value.JobRecordValue;
 import io.micrometer.core.instrument.composite.CompositeMeterRegistry;
+import java.util.EnumSet;
+import java.util.Set;
 
 public final class JobMetricExporter implements Exporter {
+  private static final Set<ValueType> VALUE_TYPES =
+      EnumSet.of(ValueType.JOB, ValueType.JOB_BATCH, ValueType.INCIDENT);
+
   private final CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
   private final JobCountMetadata jobCounters = new JobCountMetadata(meterRegistry);
   private final Cache<Long, String> keyToTypeCache =
@@ -28,6 +35,18 @@ public final class JobMetricExporter implements Exporter {
         .add(context.getMeterRegistry())
         .config()
         .commonTags("partitionId", String.valueOf(context.getPartitionId()));
+    context.setFilter(
+        new Context.RecordFilter() {
+          @Override
+          public boolean acceptType(RecordType recordType) {
+            return recordType == RecordType.EVENT;
+          }
+
+          @Override
+          public boolean acceptValue(ValueType valueType) {
+            return VALUE_TYPES.contains(valueType);
+          }
+        });
   }
 
   @Override

@@ -36,8 +36,9 @@ final class JobCountMetadata {
 
   public void decrement(final String jobType, final int count) {
     final var actual = counts.get(jobType);
-    if (actual <= count) {
+    if (actual != null && actual <= count) {
       counts.remove(jobType);
+      return;
     }
 
     counts.computeIfPresent(
@@ -89,6 +90,7 @@ final class JobCountMetadata {
       offset += Integer.BYTES;
 
       counts.put(type, count);
+      monitorJobType(type);
     }
   }
 
