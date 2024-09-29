@@ -1,7 +1,5 @@
 package com.github.sijoma.exporter;
 
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import io.camunda.zeebe.exporter.api.Exporter;
 import io.camunda.zeebe.exporter.api.context.Context;
 import io.camunda.zeebe.exporter.api.context.Controller;
@@ -23,10 +21,8 @@ public final class JobMetricExporter implements Exporter {
       EnumSet.of(ValueType.JOB, ValueType.JOB_BATCH, ValueType.INCIDENT);
 
   private final CompositeMeterRegistry meterRegistry = new CompositeMeterRegistry();
-  private final JobCountMetadata jobCounters = new JobCountMetadata(meterRegistry);
-  private final Cache<Long, String> keyToTypeCache =
-      Caffeine.newBuilder().maximumSize(10_000).build();
 
+  private JobCountMetadata jobCounters;
   private Controller controller;
 
   @Override
@@ -47,6 +43,8 @@ public final class JobMetricExporter implements Exporter {
             return VALUE_TYPES.contains(valueType);
           }
         });
+
+    jobCounters = new JobCountMetadata(meterRegistry, context.getLogger());
   }
 
   @Override
@@ -75,18 +73,17 @@ public final class JobMetricExporter implements Exporter {
       final var type = (jobRecord).getValue().getType();
       switch (intent) {
         case CREATED:
-          keyToTypeCache.put(jobRecord.getKey(), type);
         case TIMED_OUT:
         case YIELDED:
         case RECURRED_AFTER_BACKOFF:
-          jobCounters.increment(type);
+          jobCounters.increment(jobRecord.getKey(), type);
           break;
         case FAILED:
           // on failed, only increment if we would retry immediately; otherwise wait for the recur
           // event
           if (jobRecord.getValue().getRetries() > 0
               && jobRecord.getValue().getRetryBackoff() <= 0) {
-            jobCounters.increment(type);
+            jobCounters.increment(jobRecord.getKey(), type);
           }
           break;
         default:
@@ -96,10 +93,7 @@ public final class JobMetricExporter implements Exporter {
       final var incidentRecord = (Record<IncidentRecordValue>) record;
       final var jobKey = incidentRecord.getValue().getJobKey();
       if (intent == IncidentIntent.RESOLVED && jobKey > 0) {
-        final var jobType = keyToTypeCache.get(jobKey, ignored -> null);
-        if (jobType != null) {
-          jobCounters.increment(jobType);
-        }
+        jobCounters.incrementIncident(jobKey);
       }
     }
 

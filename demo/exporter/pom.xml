@@ -21,12 +21,14 @@
   <properties>
     <version.java>21</version.java>
     <additionalparam>-Xdoclint:none</additionalparam>
+    <maven.compiler.proc>full</maven.compiler.proc>
     <skipChecks>false</skipChecks>
     <enforcer.skip>${skipChecks}</enforcer.skip>
 
     <!-- project dependencies -->
-    <version.agrona>1.23.0</version.agrona>
-    <version.caffeine>3.1.8</version.caffeine>
+    <version.dsl-json>2.0.2</version.dsl-json>
+    <version.guava>33.3.1-jre</version.guava>
+    <version.javax-jsonb>1.0</version.javax-jsonb>
     <version.jcip>1.0</version.jcip>
     <version.micrometer>1.13.4</version.micrometer>
     <version.slf4j>2.0.1</version.slf4j>
@@ -80,17 +82,23 @@
 
     <!-- cache to map job keys to type for incident resolution -->
     <dependency>
-      <groupId>com.github.ben-manes.caffeine</groupId>
-      <artifactId>caffeine</artifactId>
-      <version>${version.caffeine}</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${version.guava}</version>
+      <scope>provided</scope>
     </dependency>
 
-    <!-- various utilities -->
+    <!-- serialization -->
     <dependency>
-      <groupId>org.agrona</groupId>
-      <artifactId>agrona</artifactId>
-      <version>${version.agrona}</version>
-      <scope>provided</scope>
+      <groupId>com.dslplatform</groupId>
+      <artifactId>dsl-json</artifactId>
+      <version>${version.dsl-json}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.json.bind</groupId>
+      <artifactId>javax.json.bind-api</artifactId>
+      <version>${version.javax-jsonb}</version>
     </dependency>
 
     <!-- logging -->
@@ -130,6 +138,9 @@
         <version>${plugin.version.compiler}</version>
         <configuration>
           <release>${version.java}</release>
+          <compilerArguments>
+            <Adsljson.jsonb>true</Adsljson.jsonb>
+          </compilerArguments>
         </configuration>
       </plugin>
 

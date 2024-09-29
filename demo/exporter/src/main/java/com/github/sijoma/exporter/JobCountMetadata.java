@@ -1,30 +1,56 @@
 package com.github.sijoma.exporter;
 
+import com.dslplatform.json.CompiledJson;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import java.nio.ByteOrder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
 import net.jcip.annotations.ThreadSafe;
-import org.agrona.BufferUtil;
-import org.agrona.collections.MutableInteger;
-import org.agrona.concurrent.UnsafeBuffer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ThreadSafe
-final class JobCountMetadata {
-  private static final ByteOrder ENDIANNESS = ByteOrder.LITTLE_ENDIAN;
-  private static final Charset CHARSET = StandardCharsets.UTF_8;
+public final class JobCountMetadata {
+  private final Jsonb serializer = JsonbBuilder.newBuilder().build();
   private final ConcurrentMap<String, Integer> counts = new ConcurrentHashMap<>();
-  private final MeterRegistry meterRegistry;
+  private final Cache<Long, String> keyToTypeCache =
+      CacheBuilder.newBuilder().maximumSize(10_000).concurrencyLevel(1).build();
 
-  JobCountMetadata(MeterRegistry meterRegistry) {
+  private final MeterRegistry meterRegistry;
+  private final Logger logger;
+
+  public JobCountMetadata(final MeterRegistry meterRegistry, final Logger logger) {
     this.meterRegistry = meterRegistry;
+    this.logger = logger;
   }
 
-  public void increment(final String jobType) {
+  public static void main(final String[] args) {
+    final var count =
+        new JobCountMetadata(
+            new SimpleMeterRegistry(), LoggerFactory.getLogger(JobCountMetadata.class));
+    count.increment(1, "test");
+    count.increment(2, "test");
+    count.increment(3, "test");
+    count.increment(4, "foo");
+    final var serialized = count.serialize();
+    final var deser =
+        new JobCountMetadata(
+            new SimpleMeterRegistry(), LoggerFactory.getLogger(JobCountMetadata.class));
+    deser.deserialize(serialized);
+
+    System.out.println(count);
+    System.out.println(deser);
+  }
+
+  public void increment(final long jobKey, final String jobType) {
     final var actual = counts.get(jobType);
     if (actual == null) {
       counts.put(jobType, 1);
@@ -32,6 +58,20 @@ final class JobCountMetadata {
     } else {
       counts.put(jobType, actual + 1);
     }
+
+    keyToTypeCache.put(jobKey, jobType);
+  }
+
+  public void incrementIncident(final long jobKey) {
+    final var type = keyToTypeCache.getIfPresent(jobKey);
+    if (type == null) {
+      logger.debug(
+          "Failed to increment job count for incident since key [{}] is not present in cache",
+          jobKey);
+      return;
+    }
+
+    increment(jobKey, type);
   }
 
   public void decrement(final String jobType, final int count) {
@@ -57,76 +97,31 @@ final class JobCountMetadata {
   }
 
   public byte[] serialize() {
-    final var length = length();
-
-    if (length == 0) {
-      return BufferUtil.NULL_BYTES;
-    }
-
-    final var bytes = new byte[length];
-    final var buffer = new UnsafeBuffer(bytes);
-    final var offset = new MutableInteger(0);
-    counts.forEach(
-        (type, count) -> offset.value += serializeCount(buffer, offset.value, type, count));
-
-    assert offset.value == length : "expected total bytes serialized to equal predicted length";
-    return bytes;
+    final var output = new ByteArrayOutputStream();
+    serializer.toJson(new State(keyToTypeCache.asMap(), counts), output);
+    return output.toByteArray();
   }
 
-  public void deserialize(final byte[] bytes) {
-    final var buffer = new UnsafeBuffer(bytes);
+  public JobCountMetadata deserialize(final byte[] bytes) {
+    final var state = serializer.fromJson(new ByteArrayInputStream(bytes), State.class);
+
     counts.clear();
+    keyToTypeCache.invalidateAll();
 
-    if (bytes.length == 0) {
-      return;
-    }
+    counts.putAll(state.counts);
+    keyToTypeCache.putAll(state.typeCache);
 
-    int offset = 0;
-    while (offset < bytes.length) {
-      final var type = buffer.getStringUtf8(offset, ENDIANNESS);
-      offset += Integer.BYTES + getStringLength(type);
-
-      final var count = buffer.getInt(offset, ENDIANNESS);
-      offset += Integer.BYTES;
-
-      counts.put(type, count);
-      monitorJobType(type);
-    }
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    JobCountMetadata that = (JobCountMetadata) o;
-    return Objects.equals(counts, that.counts);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hashCode(counts);
+    return this;
   }
 
   @Override
   public String toString() {
-    return "JobCountMetadata{" + "counts=" + counts + '}';
-  }
-
-  private int serializeCount(
-      final UnsafeBuffer buffer, final int offset, final String type, final int count) {
-    int bytesWritten = buffer.putStringUtf8(offset, type, ENDIANNESS);
-    buffer.putInt(offset + bytesWritten, count, ENDIANNESS);
-    return bytesWritten + Integer.BYTES;
-  }
-
-  private int length() {
-    final var length = new MutableInteger(0);
-    counts.forEach((type, ignored) -> length.value += 2 * Integer.BYTES + getStringLength(type));
-    return length.value;
-  }
-
-  private int getStringLength(final String type) {
-    return type.getBytes(CHARSET).length;
+    return "JobCountMetadata{"
+        + "counts="
+        + counts
+        + ", keyToTypeCache="
+        + keyToTypeCache.asMap()
+        + '}';
   }
 
   private void monitorJobType(final String jobType) {
@@ -136,4 +131,7 @@ final class JobCountMetadata {
         .description("Count of available jobs per type")
         .register(meterRegistry);
   }
+
+  @CompiledJson
+  public record State(Map<Long, String> typeCache, Map<String, Integer> counts) {}
 }
