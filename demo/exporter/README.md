@@ -5,6 +5,29 @@ providing an absolute count per job type.
 
 ## Usage
 
+Build the project:
+
+```shell
+mvn clean install -DskipTests -DskipChecks -T1C
+```
+
+Copy over the resulting uber JAR:
+
+```shell
+cp target/job-metric-exporter-uber.jar /usr/local/zeebe/exporters/job-metric-exporter-uber.jar
+```
+
+Configure your broker with:
+
+```yaml
+zeebe:
+  broker:
+    exporters:
+      job-metrics:
+        className: "com.github.sijoma.exporter.JobMetricExporter"
+        jarPath: "/usr/local/zeebe/exportersjob-metric-exporter-uber.jar" 
+```
+
 The count is measured via the metric `zeebe.jobs.available` (or in
 Prometheus, `zeebe_jobs_available`), with a `jobType` label and
 `partitionId` label.
