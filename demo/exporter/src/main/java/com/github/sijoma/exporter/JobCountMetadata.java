@@ -5,7 +5,6 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
@@ -15,7 +14,6 @@ import javax.json.bind.Jsonb;
 import javax.json.bind.JsonbBuilder;
 import net.jcip.annotations.ThreadSafe;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ThreadSafe
 public final class JobCountMetadata {
@@ -30,24 +28,6 @@ public final class JobCountMetadata {
   public JobCountMetadata(final MeterRegistry meterRegistry, final Logger logger) {
     this.meterRegistry = meterRegistry;
     this.logger = logger;
-  }
-
-  public static void main(final String[] args) {
-    final var count =
-        new JobCountMetadata(
-            new SimpleMeterRegistry(), LoggerFactory.getLogger(JobCountMetadata.class));
-    count.increment(1, "test");
-    count.increment(2, "test");
-    count.increment(3, "test");
-    count.increment(4, "foo");
-    final var serialized = count.serialize();
-    final var deser =
-        new JobCountMetadata(
-            new SimpleMeterRegistry(), LoggerFactory.getLogger(JobCountMetadata.class));
-    deser.deserialize(serialized);
-
-    System.out.println(count);
-    System.out.println(deser);
   }
 
   public void increment(final long jobKey, final String jobType) {
@@ -88,7 +68,7 @@ public final class JobCountMetadata {
           if (newValue < 0) {
             return null;
           }
-          return newValue <= 0 ? null : newValue;
+          return newValue == 0 ? null : newValue;
         });
   }
 
@@ -99,19 +79,29 @@ public final class JobCountMetadata {
   public byte[] serialize() {
     final var output = new ByteArrayOutputStream();
     serializer.toJson(new State(keyToTypeCache.asMap(), counts), output);
+    logger.trace(
+        "Serialized job metric metadata: {} counts, {} types",
+        counts.size(),
+        keyToTypeCache.size());
     return output.toByteArray();
   }
 
-  public JobCountMetadata deserialize(final byte[] bytes) {
+  public void deserialize(final byte[] bytes) {
     final var state = serializer.fromJson(new ByteArrayInputStream(bytes), State.class);
 
     counts.clear();
     keyToTypeCache.invalidateAll();
 
-    counts.putAll(state.counts);
+    state.counts.forEach(
+        (type, count) -> {
+          counts.put(type, count);
+          monitorJobType(type);
+        });
     keyToTypeCache.putAll(state.typeCache);
-
-    return this;
+    logger.debug(
+        "Deserialized job metric metadata: {} counts, {} types",
+        counts.size(),
+        keyToTypeCache.size());
   }
 
   @Override
