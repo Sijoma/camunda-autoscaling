@@ -96,4 +96,7 @@ As mentioned, there are some limitations to this approach via an exporter:
 - Serialization of the type cache is sub-optimal. We serialize each key - type pair,
   but it's very likely many keys share the same type, so we're writing out the same type
   over and over and over. Compression helps somewhat, but we could likely improve this.
+- The exporter depends on the semantics of the engine, i.e. when a job is made activatable.
+  Since new intents/records can be introduced, it's possible that newer versions would break
+  the logic here.
  
