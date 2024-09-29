@@ -93,4 +93,7 @@ As mentioned, there are some limitations to this approach via an exporter:
 - Serializing the counts and type cache in the exporter metadata is not a great pattern, because that
   contains user data (job types), which could be sent over unencrypted traffic (e.g. UDP). Additionally,
   that could become quite large, slowing down exporting.
+- Serialization of the type cache is sub-optimal. We serialize each key - type pair,
+  but it's very likely many keys share the same type, so we're writing out the same type
+  over and over and over. Compression helps somewhat, but we could likely improve this.
  
