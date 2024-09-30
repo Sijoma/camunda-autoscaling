@@ -1,0 +1,14 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: monitoring
+name: kube-prometheus-stack
+repo: https://prometheus-community.github.io/helm-charts
+version: 62.1.0
+# NOTE: We should use "nameTemplate" not "releaseName" to keep the names as same as using Helm CLI.
+nameTemplate: prom
+namespace: monitoring
+IncludeCRDs: true
+valuesMerge: merge
+valuesFile: prometheus-values.yaml
+skipTests: true

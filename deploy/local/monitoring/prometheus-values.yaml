@@ -1,0 +1,7 @@
+prometheus:
+  prometheusSpec:
+    # Allow to pickup servicemonitors etc from everywhere
+    podMonitorSelectorNilUsesHelmValues: false
+    probeSelectorNilUsesHelmValues: false
+    scrapeConfigSelectorNilUsesHelmValues: false
+    serviceMonitorSelectorNilUsesHelmValues: false
