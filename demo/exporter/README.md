@@ -14,7 +14,7 @@ mvn clean install -DskipTests -DskipChecks -T1C
 Copy over the resulting uber JAR:
 
 ```shell
-cp target/job-metric-exporter-uber.jar /usr/local/zeebe/exporters/job-metric-exporter-uber.jar
+cp target/job-metric-exporter-uber.jar /usr/local/zeebe/exporters/job-metric-exporter.jar
 ```
 
 Configure your broker with:
@@ -25,7 +25,7 @@ zeebe:
     exporters:
       job-metrics:
         className: "com.github.sijoma.exporter.JobMetricExporter"
-        jarPath: "/usr/local/zeebe/exportersjob-metric-exporter-uber.jar" 
+        jarPath: "/usr/local/zeebe/exporters/job-metric-exporter.jar" 
 ```
 
 The count is measured via the metric `zeebe.jobs.available` (or in

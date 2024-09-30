@@ -1,0 +1,37 @@
+repositories:
+  - name: zeebe-benchmark
+    url: https://zeebe-io.github.io/benchmark-helm/
+
+releases:
+  - name: demo
+    namespace: np-demo
+    chart: zeebe-benchmark/zeebe-benchmark
+    values:
+      # externalize workers values as there's quite a few
+      - workers.values.yaml
+      # externalize the cluster configuration
+      - cluster.values.yaml
+      - worker:
+          # Disable old deprecated workers
+          replicas: 0
+      - starter:
+          # Starter configuration for the to be deployed starter application
+          # Defines how many replicas of the application should be deployed
+          replicas: 1
+          # Defines with which rate process instances should be created by the starter
+          rate: 1
+          # Defines the logging level for the benchmark starter
+          logLevel: "INFO"
+          # Defines the process ID, that should be used for creating new process instances
+          processId: "sign-up-process"
+          # Defines the path (inside the starter app) to the payload resource that should be used to create the
+          # corresponding process instance
+          payloadPath: "bpmn/demo/sign-up-input.json"
+          # Defines the path (inside the starter app) to the main bpmn XML resource that should be deployed
+          bpmnXmlPath: "bpmn/demo/sign-up-process.bpmn"
+      - global:
+          image:
+            # This is not used by the Camunda Platform chart, but just by the benchmark-helm one; so this is primarily
+            # for the application itself.
+            repository: gcr.io/zeebe-io
+            tag: autoscaling-demo

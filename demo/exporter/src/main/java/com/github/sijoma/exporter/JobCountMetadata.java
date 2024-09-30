@@ -116,7 +116,6 @@ public final class JobCountMetadata {
 
   private void monitorJobType(final String jobType) {
     Gauge.builder("zeebe.jobs.available", () -> counts.getOrDefault(jobType, 0))
-        .baseUnit("job")
         .tag("jobType", jobType)
         .description("Count of available jobs per type")
         .register(meterRegistry);
