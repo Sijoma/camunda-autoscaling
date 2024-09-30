@@ -17,6 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -54,9 +56,41 @@ type ZeebeAutoscalerStatus struct {
 	Selector string `json:"selector"`
 }
 
+// ConditionReason defines the reason why a certain condition changed
+type ConditionReason string
+
+const (
+	ConditionZeebeTopologyFound    ConditionReason = "ZeebeTopologyFound"
+	ConditionZeebePendingOperation ConditionReason = "ZeebePendingOperation"
+)
+
+type ScalingCondition string
+
+const ReadyToScale ScalingCondition = "ReadyToScale"
+
+func ZeebePendingOperations(brokerCount int) metav1.Condition {
+	return metav1.Condition{
+		Type:    string(ReadyToScale),
+		Status:  metav1.ConditionTrue,
+		Reason:  string(ConditionZeebeTopologyFound),
+		Message: fmt.Sprintf("Zeebe Topology queried. Found %d Brokers.", brokerCount),
+	}
+}
+
+func ZeebePendingTopologyChange(status string) metav1.Condition {
+	return metav1.Condition{
+		Type:    string(ReadyToScale),
+		Status:  metav1.ConditionFalse,
+		Reason:  string(ConditionZeebePendingOperation),
+		Message: fmt.Sprintf("Topology change pending: Status: %s", status),
+	}
+}
+
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
+// +kubebuilder:printcolumn:name="Ready To Scale",type=string,JSONPath=`.status.conditions[?(@.type=='ReadyToScale')].status`
+// +kubebuilder:printcolumn:name="Target",type=string,JSONPath=`.spec.zeebeRef.name`
 
 // ZeebeAutoscaler is the Schema for the zeebeautoscalers API
 type ZeebeAutoscaler struct {

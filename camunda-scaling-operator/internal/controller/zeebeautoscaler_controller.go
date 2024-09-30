@@ -23,6 +23,7 @@ import (
 
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
@@ -91,11 +92,25 @@ func (r *ZeebeAutoscalerReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, err
 	}
 
-	// Check if change is already pending
-	if topology.HasPendingChange() {
+	if !topology.HasPendingChange() {
+		// We are able to query the Zeebe Topology 🚀
+		changed := meta.SetStatusCondition(&zeebeAutoscalerCR.Status.Conditions, camundav1alpha1.ZeebePendingOperations(len(topology.Brokers)))
+		if changed {
+			err := r.Status().Update(ctx, zeebeAutoscalerCR)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+	} else if topology.HasPendingChange() {
 		logger.Info("cluster scaling in progress", "topology", topology.PendingChange.Status)
-		// Todo: update status
-		return ctrl.Result{}, fmt.Errorf("cluster scaling in progress")
+		changed := meta.SetStatusCondition(&zeebeAutoscalerCR.Status.Conditions, camundav1alpha1.ZeebePendingTopologyChange(*topology.PendingChange.Status))
+		if changed {
+			err := r.Status().Update(ctx, zeebeAutoscalerCR)
+			if err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+		return ctrl.Result{RequeueAfter: time.Second * 10}, nil
 	}
 
 	// 2. check if we need to downscale / upscale
