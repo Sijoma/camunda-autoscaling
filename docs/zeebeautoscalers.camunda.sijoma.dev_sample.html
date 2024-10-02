@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-twilight.min.css"
+    />
+    <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/halfmoon@1.1.1/css/halfmoon.min.css"
+    />
+
+    <title>Preview CRDs</title>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        @media (max-width: 576px) {
+            body .content-wrapper > div {
+                padding-left: 1.5rem;
+                padding-right: 1.5rem;
+            }
+        }
+
+        body .content-wrapper {
+            padding-bottom: 2rem;
+        }
+    </style>
+    <style>
+
+    </style>
+</head>
+
+<body class="dark-mode" data-dm-shortcut-enabled="true" data-sidebar-shortcut-enabled="true">
+<div class="content-wrapper">
+    <div class="container">
+        <div class="versions">
+            
+            <h1>
+                Version: camunda.sijoma.dev/v1alpha1<br>
+                Kind: ZeebeAutoscaler
+            </h1>
+            <p class="font-size-18">
+                <div>
+                    <p>ZeebeAutoscaler is the Schema for the zeebeautoscalers API</p>
+                </div>
+                <label>Generated YAML sample:</label>
+                <div class="collapse-group">
+                    <details class="collapse-panel">
+                        <div id="yaml-v1alpha1" class="collapse-content">
+                            <pre class="language-yaml"><code class="language-yaml"># APIVersion defines the versioned schema of this representation of an object.
+# Servers should convert recognized schemas to the latest internal value, and
+# may reject unrecognized values.
+# More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+apiVersion: camunda.sijoma.dev/v1alpha1
+# Kind is a string value representing the REST resource this object represents.
+# Servers may infer this from the endpoint the client submits requests to.
+# Cannot be updated.
+# In CamelCase.
+# More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+kind: ZeebeAutoscaler
+metadata: {}
+# ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
+spec:
+  replicas: 1
+  # ZeebeRef references that exists in the same namespace.
+  zeebeRef:
+    gateway:
+      port: 1
+      serviceName: string
+    # Name of the Zeebe statefulset to scale
+    name: string
+# ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler
+status:
+  # Conditions holds the information on the last operations on Zeebe that can be useful during scaling
+  conditions:
+  - lastTransitionTime: string
+    # message is a human readable message indicating details about the transition.
+    # This may be an empty string.
+    message: string
+    # observedGeneration represents the .metadata.generation that the condition was set based upon.
+    # For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+    # with respect to the current state of the instance.
+    observedGeneration: 0
+    # reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+    # Producers of specific condition types may define expected values and meanings for this field,
+    # and whether the values are considered a guaranteed API.
+    # The value should be a CamelCase string.
+    # This field may not be empty.
+    reason: b # ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+    # status of the condition, one of True, False, Unknown.
+    status: &#34;True&#34;
+    # type of condition in CamelCase or in foo.example.com/CamelCase.
+    # ---
+    # Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+    # useful (see .node.status.conditions), the ability to deconflict is important.
+    # The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+    type: twa2m7/iMV9 # ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+  # ObservedGeneration is the last observed generation by the controller.
+  observedGeneration: 1
+  replicas: 1
+  selector: string
+</code></pre>
+                        </div>
+                    </details>
+                </div>
+            </p>
+            <div class="d-flex flex-row-reverse mb-10 mt-10">
+                <button class="btn ml-10" type="button" onclick="expandAll()">
+                    + expand all
+                </button>
+                <button class="btn" type="button" onclick="collapseAll()">
+                    - collapse all
+                </button>
+            </div>
+            <div class="collapse-group">
+                
+                <details class="collapse-panel">
+                    <summary class="collapse-header position-relative">
+                        apiVersion <kbd class="text-muted">string</kbd>
+                        
+                        
+                        
+                        
+                        <span class="badge badge-primary">required</span>
+                        
+                    </summary>
+                    <div id="apiVersion" class="collapse-content">
+                        <div class="property-description">
+                            <p>APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources</p>
+                        </div>
+                        
+
+
+                    </div>
+                    <br>
+                </details>
+                
+                <details class="collapse-panel">
+                    <summary class="collapse-header position-relative">
+                        kind <kbd class="text-muted">string</kbd>
+                        
+                        
+                        
+                        
+                        <span class="badge badge-primary">required</span>
+                        
+                    </summary>
+                    <div id="kind" class="collapse-content">
+                        <div class="property-description">
+                            <p>Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds</p>
+                        </div>
+                        
+
+
+                    </div>
+                    <br>
+                </details>
+                
+                <details class="collapse-panel">
+                    <summary class="collapse-header position-relative">
+                        metadata <kbd class="text-muted">object</kbd>
+                        
+                        
+                        
+                        
+                        <span class="badge badge-primary">required</span>
+                        
+                    </summary>
+                    <div id="metadata" class="collapse-content">
+                        <div class="property-description">
+                            <p></p>
+                        </div>
+                        
+
+
+                    </div>
+                    <br>
+                </details>
+                
+                <details class="collapse-panel">
+                    <summary class="collapse-header position-relative">
+                        spec <kbd class="text-muted">object</kbd>
+                        
+                        
+                        
+                        
+                        <span class="badge badge-primary">required</span>
+                        
+                    </summary>
+                    <div id="spec" class="collapse-content">
+                        <div class="property-description">
+                            <p>ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler</p>
+                        </div>
+                        
+
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        replicas <kbd class="text-muted">integer</kbd>
+        
+        <kbd class="text-muted">int32</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="replicas" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        zeebeRef <kbd class="text-muted">object</kbd>
+        
+        
+        
+        <kbd class="text-primary">{&#34;gateway&#34;:{&#34;port&#34;:9600,&#34;serviceName&#34;:&#34;camunda-platform-zeebe-gateway&#34;},&#34;name&#34;:&#34;camunda-platform-zeebe&#34;}</kbd>
+        
+        
+    </summary>
+    <div id="zeebeRef" class="collapse-content">
+        <div class="property-description">
+            <p>ZeebeRef references that exists in the same namespace.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        gateway <kbd class="text-muted">object</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="gateway" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        port <kbd class="text-muted">integer</kbd>
+        
+        <kbd class="text-muted">int32</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="port" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        serviceName <kbd class="text-muted">string</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="serviceName" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        name <kbd class="text-muted">string</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="name" class="collapse-content">
+        <div class="property-description">
+            <p>Name of the Zeebe statefulset to scale</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+
+
+                    </div>
+                    <br>
+                </details>
+                
+                <details class="collapse-panel">
+                    <summary class="collapse-header position-relative">
+                        status <kbd class="text-muted">object</kbd>
+                        
+                        
+                        
+                        
+                    </summary>
+                    <div id="status" class="collapse-content">
+                        <div class="property-description">
+                            <p>ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler</p>
+                        </div>
+                        
+
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        conditions <kbd class="text-muted">array</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="conditions" class="collapse-content">
+        <div class="property-description">
+            <p>Conditions holds the information on the last operations on Zeebe that can be useful during scaling</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        lastTransitionTime <kbd class="text-muted">string</kbd>
+        
+        <kbd class="text-muted">date-time</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="lastTransitionTime" class="collapse-content">
+        <div class="property-description">
+            <p>lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        message <kbd class="text-muted">string</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="message" class="collapse-content">
+        <div class="property-description">
+            <p>message is a human readable message indicating details about the transition.
+This may be an empty string.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        observedGeneration <kbd class="text-muted">integer</kbd>
+        
+        <kbd class="text-muted">int64</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="observedGeneration" class="collapse-content">
+        <div class="property-description">
+            <p>observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        reason <kbd class="text-muted">string</kbd>
+        
+        
+        <kbd class="text-muted">^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</kbd>
+        
+        
+        
+    </summary>
+    <div id="reason" class="collapse-content">
+        <div class="property-description">
+            <p>reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        status <kbd class="text-muted">string</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="status" class="collapse-content">
+        <div class="property-description">
+            <p>status of the condition, one of True, False, Unknown.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        type <kbd class="text-muted">string</kbd>
+        
+        
+        <kbd class="text-muted">^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</kbd>
+        
+        
+        
+    </summary>
+    <div id="type" class="collapse-content">
+        <div class="property-description">
+            <p>type of condition in CamelCase or in foo.example.com/CamelCase.
+---
+Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
+useful (see .node.status.conditions), the ability to deconflict is important.
+The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        observedGeneration <kbd class="text-muted">integer</kbd>
+        
+        <kbd class="text-muted">int64</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="observedGeneration" class="collapse-content">
+        <div class="property-description">
+            <p>ObservedGeneration is the last observed generation by the controller.</p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        replicas <kbd class="text-muted">integer</kbd>
+        
+        <kbd class="text-muted">int32</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="replicas" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+<details class="collapse-panel">
+    <summary class="collapse-header position-relative">
+        selector <kbd class="text-muted">string</kbd>
+        
+        
+        
+        
+    </summary>
+    <div id="selector" class="collapse-content">
+        <div class="property-description">
+            <p></p>
+        </div>
+        <div class="collapse-group">
+            
+            
+
+
+        </div>
+    </div>
+    <br>
+</details>
+
+
+
+                    </div>
+                    <br>
+                </details>
+                
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script>
+    function expandAll() {
+        console.log("todo: loop through all elements and expand them")
+    }
+
+    function collapseAll() {
+        console.log("todo: loop through all elements and collapse them")
+    }
+</script>
+</body>
+</html>
+
+
+
