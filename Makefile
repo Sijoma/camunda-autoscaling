@@ -61,4 +61,5 @@ deploy-demo:
 	helmfile -f demo/deployment/helmfile.yaml apply
 
 clean-demo:
-	helmfile -f demo/deployment/helmfile.yaml destroy
+	helmfile -f demo/deployment/helmfile.yaml destroy && \
+	kubectl get pvc -n demo --no-headers=true -o custom-columns=":metadata.name" | xargs -n1 kubectl -n demo delete pvc
