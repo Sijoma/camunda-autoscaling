@@ -1,0 +1,16 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: prom-adapter
+name: prometheus-adapter
+repo: https://prometheus-community.github.io/helm-charts
+version: 4.11.0
+# NOTE: We should use "nameTemplate" not "releaseName" to keep the names as same as using Helm CLI.
+nameTemplate: adapter
+namespace: prom-adapter
+IncludeCRDs: true
+valuesMerge: merge
+valuesFile: adapter-values.yaml
+skipTests: true
+apiVersions:
+  - apiregistration.k8s.io/v1

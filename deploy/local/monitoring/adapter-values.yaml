@@ -1,0 +1,19 @@
+# Url to access prometheus
+prometheus:
+  # Value is templated
+  url: http://prometheus-operated.monitoring.svc
+  port: 9090
+
+rules:
+  custom:
+    - seriesQuery: zeebe_dropped_request_count_created{namespace!="",pod!=""}
+      name:
+        as: ${1}_per_second
+        matches: ^(.*)_created
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[2m])) by (<<.GroupBy>>)
