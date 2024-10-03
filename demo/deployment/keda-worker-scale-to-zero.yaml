@@ -21,8 +21,8 @@ spec:
               value: 100
               periodSeconds: 15
     scalingModifiers:
-      formula: "jobs_available_metric > 0 ? 1 : 0"
-      target: "1"
+      formula: "jobs_available_metric > 0 ? jobs_capacity_metric : 0"
+      target: "0.5"
       activationTarget: "0.5"
       metricType: "AverageValue"
   triggers:
@@ -34,9 +34,9 @@ spec:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
         query: sum(zeebe_jobs_available{jobType="validate-payment-info"}) # Note: query must return a vector/scalar single element response
         threshold: '20'
-#    - type: prometheus
-#      name: jobs_capacity_metric # -> converges to zero (workers do the work, if its higher workers need to scale UP)
-#      metadata:
-#        serverAddress: http://prometheus-operated.monitoring.svc:9090
-#        query: zeebe_client_worker_job_capacity{jobType="validate-payment-info"} # Note: query must return a vector/scalar single element response
-#        threshold: '0.5'
+    - type: prometheus
+      name: jobs_capacity_metric # -> converges to zero (workers do the work, if its higher workers need to scale UP)
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: zeebe_client_worker_job_capacity{jobType="validate-payment-info"} # Note: query must return a vector/scalar single element response
+        threshold: '0.5'
