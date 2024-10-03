@@ -11,6 +11,7 @@ camunda-platform:
     image:
       repository: camunda/zeebe
       tag: 8.6.0
+    pvcStorageClassName: "standard"
 
     retention:
       enabled: true
@@ -23,6 +24,8 @@ camunda-platform:
       requests:
         cpu: 1350m
         memory: 1Gi
+
+
 
     initContainers:
       - name: job-metric-exporter

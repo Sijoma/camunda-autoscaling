@@ -9,8 +9,6 @@ deploy-stack:
 	$(MAKE) deploy-monitoring
 	sleep 5
 	$(MAKE) deploy-monitoring
-	sleep 5
-	$(MAKE) deploy-monitoring
 # Exchange with deploy without build
 	$(MAKE) -C camunda-scaling-operator deploy-test-env
 	$(MAKE) deploy-camunda
@@ -58,6 +56,10 @@ lint-demo:
 	helmfile -f demo/deployment/helmfile.yaml lint
 
 deploy-demo:
+	kind load docker-image ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo --name hackdays
+	kind load docker-image ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo --name hackdays
+	kind load docker-image ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:autoscaling-demo --name hackdays
+	kind load docker-image camunda/zeebe:8.6.0 --name hackdays
 	helmfile -f demo/deployment/helmfile.yaml apply
 
 clean-demo:

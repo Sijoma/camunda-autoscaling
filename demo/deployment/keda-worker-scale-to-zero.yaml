@@ -1,0 +1,42 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: validate-payment-worker
+spec:
+  scaleTargetRef:
+    name: validate-payment-worker             # Mandatory. Must be in the same namespace as the ScaledObject
+  pollingInterval:  30                                      # Optional. Default: 30 seconds
+  cooldownPeriod:   300                                     # Optional. Default: 300 seconds
+  initialCooldownPeriod:  0                                 # Optional. Default: 0 seconds
+  idleReplicaCount: 0  #This basically triggers when the metric is not active                                      # Optional. Default: ignored, must be less than minReplicaCount
+  minReplicaCount:  1                                       # Optional. Default: 0
+  maxReplicaCount:  3                                     # Optional. Default: 100
+  advanced:
+    horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+      behavior: # Optional. Use to modify HPA's scaling behavior
+        scaleDown:
+          stabilizationWindowSeconds: 30
+          policies:
+            - type: Percent
+              value: 100
+              periodSeconds: 15
+    scalingModifiers:
+      formula: "jobs_available_metric > 0 ? 1 : 0"
+      target: "1"
+      activationTarget: "0.5"
+      metricType: "AverageValue"
+  triggers:
+# This wakes the Job worker up when there are 20 (threshold) jobs available
+# it will be put back to sleep once the available jobs are 0 after the `cooldown phase`
+    - type: prometheus
+      name: jobs_available_metric # This wakes the job worker up
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{jobType="validate-payment-info"}) # Note: query must return a vector/scalar single element response
+        threshold: '20'
+#    - type: prometheus
+#      name: jobs_capacity_metric # -> converges to zero (workers do the work, if its higher workers need to scale UP)
+#      metadata:
+#        serverAddress: http://prometheus-operated.monitoring.svc:9090
+#        query: zeebe_client_worker_job_capacity{jobType="validate-payment-info"} # Note: query must return a vector/scalar single element response
+#        threshold: '0.5'
