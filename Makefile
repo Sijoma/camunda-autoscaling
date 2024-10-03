@@ -40,7 +40,7 @@ build-demo-starter:
 	docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo" -f demo/starter.Dockerfile ./demo/
 
 build-demo-worker:
-	docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo" -f demo/worker.Dockerfile ./demo/
+	cd ./demo/worker && mvn package jib:dockerBuild -Ddocker.tag=autoscaling-demo
 
 build-demo-exporter:
 	cd demo/exporter && \

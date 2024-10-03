@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.sijoma</groupId>
-  <artifactId>job-metric-exporter</artifactId>
+  <artifactId>demo-worker</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Job Metric Exporter</name>
+  <name>Demo Worker</name>
   <url>https://github.com/Sijoma/camunda-autoscaling-hackday</url>
   <inceptionYear>2024</inceptionYear>
 
@@ -25,10 +25,10 @@
     <skipChecks>false</skipChecks>
     <enforcer.skip>${skipChecks}</enforcer.skip>
 
+    <!-- docker image props -->
+    <docker.tag>SNAPSHOT</docker.tag>
+
     <!-- project dependencies -->
-    <version.dsl-json>2.0.2</version.dsl-json>
-    <version.guava>33.3.1-jre</version.guava>
-    <version.javax-jsonb>1.0</version.javax-jsonb>
     <version.jcip>1.0</version.jcip>
     <version.micrometer>1.13.4</version.micrometer>
     <version.slf4j>2.0.1</version.slf4j>
@@ -40,8 +40,8 @@
     <plugin.version.enforcer>3.5.0</plugin.version.enforcer>
     <plugin.version.google-format>1.17.0</plugin.version.google-format>
     <plugin.version.jar>3.4.2</plugin.version.jar>
+    <plugin.version.jib>3.4.2</plugin.version.jib>
     <plugin.version.resources>3.3.1</plugin.version.resources>
-    <plugin.version.shade>3.6.0</plugin.version.shade>
     <plugin.version.spotless>2.43.0</plugin.version.spotless>
   </properties>
 
@@ -69,36 +69,14 @@
     <!-- zeebe -->
     <dependency>
       <groupId>io.camunda</groupId>
-      <artifactId>zeebe-exporter-api</artifactId>
-      <scope>provided</scope>
+      <artifactId>zeebe-benchmark</artifactId>
+      <version>${version.zeebe}</version>
     </dependency>
 
     <!-- micrometer -->
     <dependency>
       <groupId>io.micrometer</groupId>
       <artifactId>micrometer-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- cache to map job keys to type for incident resolution -->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>${version.guava}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- serialization -->
-    <dependency>
-      <groupId>com.dslplatform</groupId>
-      <artifactId>dsl-json</artifactId>
-      <version>${version.dsl-json}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.json.bind</groupId>
-      <artifactId>javax.json.bind-api</artifactId>
-      <version>${version.javax-jsonb}</version>
     </dependency>
 
     <!-- logging -->
@@ -106,14 +84,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>${version.slf4j}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>net.jcip</groupId>
-      <artifactId>jcip-annotations</artifactId>
-      <version>${version.jcip}</version>
-      <scope>provided</scope>
     </dependency>
   </dependencies>
 
@@ -187,26 +157,6 @@
         <version>${plugin.version.clean}</version>
       </plugin>
 
-      <!-- Uber JAR building -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>${plugin.version.shade}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <createDependencyReducedPom>false</createDependencyReducedPom>
-              <finalName>job-metric-exporter-uber</finalName>
-              <minimizeJar>false</minimizeJar>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <!-- Resources Plugin -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -233,6 +183,24 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- Docker Image Build -->
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>${plugin.version.jib}</version>
+        <configuration>
+          <from>
+            <image>eclipse-temurin:21</image>
+          </from>
+          <to>
+            <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
+          </to>
+          <container>
+            <mainClass>com.github.sijoma.worker.DemoWorker</mainClass>
+          </container>
+        </configuration>
       </plugin>
     </plugins>
   </build>
