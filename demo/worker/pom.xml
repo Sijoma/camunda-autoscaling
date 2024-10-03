@@ -25,6 +25,9 @@
     <skipChecks>false</skipChecks>
     <enforcer.skip>${skipChecks}</enforcer.skip>
 
+    <!-- docker image props -->
+    <docker.tag>SNAPSHOT</docker.tag>
+
     <!-- project dependencies -->
     <version.jcip>1.0</version.jcip>
     <version.micrometer>1.13.4</version.micrometer>
@@ -192,7 +195,7 @@
             <image>eclipse-temurin:21</image>
           </from>
           <to>
-            <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT</image>
+            <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
           </to>
           <container>
             <mainClass>com.github.sijoma.worker.DemoWorker</mainClass>
