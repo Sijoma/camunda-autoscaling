@@ -1,5 +1,6 @@
 # An init container which will copy the exporter JAR into /exporters/job-metric-exporter.jar
 FROM ubuntu:noble
+LABEL org.opencontainers.image.source=https://github.com/Sijoma/camunda-autoscaling-hackday
 COPY ./target/job-metric-exporter-uber.jar /app/job-metric-exporter.jar
 
 RUN groupadd --gid 1001 camunda && useradd --system --gid 1001 --uid 1001 camunda

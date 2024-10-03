@@ -10,7 +10,7 @@ camunda-platform:
   zeebe:
     image:
       repository: camunda/zeebe
-      tag: 8.6.0-rc2
+      tag: 8.6.0
 
     retention:
       enabled: true
@@ -19,15 +19,15 @@ camunda-platform:
     resources:
       limits:
         cpu: 1350m
-        memory: 4Gi
+        memory: 1Gi
       requests:
         cpu: 1350m
-        memory: 4Gi
+        memory: 1Gi
 
     initContainers:
       - name: job-metric-exporter
-        image: gcr.io/zeebe-io/job-metric-exporter:autoscaling-demo
-        imagePullPolicy: Always
+        image: ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:autoscaling-demo
+        imagePullPolicy: IfNotPresent
         volumeMounts:
           - name: zeebe-exporters
             mountPath: /exporters
@@ -50,11 +50,11 @@ camunda-platform:
         mountPath: /usr/local/zeebe/exporters
 
   zeebeGateway:
-    replicas: 2
+    replicas: 1
 
     image:
       repository: camunda/zeebe
-      tag: 8.6.0-rc2
+      tag: 8.6.0
 
     resources:
       limits:
@@ -71,9 +71,7 @@ camunda-platform:
     master:
       fullnameOverride: elastic
       nameOverride: elastic
-      replicaCount: 3
-      pdb:
-        minAvailable: 2
+      replicaCount: 1
       heapSize: 3g
       resources:
         requests:
@@ -83,6 +81,6 @@ camunda-platform:
           cpu: 2
           memory: 6Gi
       persistence:
-        storageClass: "ssd"
-        size: 128Gi
+        storageClass: "standard"
+        size: 10Gi
         accessModes: [ "ReadWriteOnce" ]

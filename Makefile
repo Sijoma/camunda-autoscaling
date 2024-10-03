@@ -25,6 +25,9 @@ deploy-monitoring:
 deploy-metrics-server:
 	kustomize build ./deploy/local/metrics-server | kubectl apply --server-side -f -
 
+deploy-keda:
+	kustomize build ./deploy/local/keda | kubectl apply --server-side -f -
+
 undeploy-camunda:
 	kustomize build --enable-helm ./deploy/local/camunda | kubectl delete -f -
 
@@ -34,20 +37,20 @@ teardown:
 ### Demo stuff
 
 build-demo-starter:
-	docker build -t "gcr.io/zeebe-io/starter:autoscaling-demo" -f demo/starter.Dockerfile ./demo/
+	docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo" -f demo/starter.Dockerfile ./demo/
 
 build-demo-worker:
-	docker build -t "gcr.io/zeebe-io/worker:autoscaling-demo" -f demo/worker.Dockerfile ./demo/
+	docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo" -f demo/worker.Dockerfile ./demo/
 
 build-demo-exporter:
 	cd demo/exporter && \
 	mvn package -DskipTests -DskipChecks -T1C && \
-	docker build -t "gcr.io/zeebe-io/job-metric-exporter:autoscaling-demo" .
+	docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:autoscaling-demo" .
 
 push-demo-images:
-	docker push gcr.io/zeebe-io/starter:autoscaling-demo && \
- 	docker push gcr.io/zeebe-io/worker:autoscaling-demo && \
- 	docker push gcr.io/zeebe-io/job-metric-exporter:autoscaling-demo
+	docker push ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo && \
+ 	docker push ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo && \
+ 	docker push ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:autoscaling-demo
 
 demo-images: build-demo-starter build-demo-worker build-demo-exporter push-demo-images
 

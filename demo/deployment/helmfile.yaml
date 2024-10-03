@@ -33,5 +33,6 @@ releases:
           image:
             # This is not used by the Camunda Platform chart, but just by the benchmark-helm one; so this is primarily
             # for the application itself.
-            repository: gcr.io/zeebe-io
+            repository: ghcr.io/sijoma/camunda-autoscaling-hackday
             tag: autoscaling-demo
+            pullPolicy: IfNotPresent
