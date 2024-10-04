@@ -198,7 +198,7 @@
             <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
           </to>
           <container>
-            <mainClass>com.github.sijoma.worker.DemoWorker</mainClass>
+            <mainClass>io.camunda.zeebe.DemoWorker</mainClass>
           </container>
         </configuration>
       </plugin>
