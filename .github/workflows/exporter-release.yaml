@@ -41,7 +41,7 @@ jobs:
       - name: Run maven build & docker build & docker push
         run: |
           cd demo/exporter && \
-          mvn package -DskipTests -DskipChecks -T1C 
+          mvn package -B -DskipTests -DskipChecks -T1C 
 
       - name: Build Docker image
         uses: docker/build-push-action@v6
