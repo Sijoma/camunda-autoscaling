@@ -1,14 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-namespace: camunda-platform
+namespace: demo
 
 resources:
   - namespace.yaml
 # Only enable if you have the camunda-scaling-operator installed
 #  - camunda_v1alpha1_zeebeautoscaler.yaml
-# Only enable if you have prometheus installed
-  - zeebe-svc-monitor.yaml
 
 generators:
   - camunda-chart.yaml

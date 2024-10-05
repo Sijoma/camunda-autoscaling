@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: clients
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: zeebe-client
+  endpoints:
+  - honorLabels: true
+      # since - is not supported directly, we have to use the index function and quote "camunda-platform"
+    interval: 10s
+    path: /prometheus
+    port: http

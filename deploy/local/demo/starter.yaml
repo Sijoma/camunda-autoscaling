@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: starter
+  labels:
+    app: starter
+spec:
+  selector:
+    matchLabels:
+      app: starter
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: starter
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: starter
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dapp.starter.rate=10
+                  -Dapp.starter.durationLimit=0
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.starter.processId="sign-up-process"
+                  -Dapp.starter.bpmnXmlPath="bpmn/demo/sign-up-process.bpmn"
+                  -Dapp.starter.businessKey="businessKey"
+                  -Dapp.starter.payloadPath="bpmn/demo/sign-up-input.json"
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          envFrom:
+            - configMapRef:
+                name: starter-config
+                optional: true
+          resources:
+            limits:
+              cpu: 250m
+              memory: 256Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"

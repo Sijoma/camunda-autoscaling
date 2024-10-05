@@ -2,7 +2,6 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: camunda-hpa
-  namespace: camunda-platform
 spec:
   behavior:
     scaleDown:
