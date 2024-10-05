@@ -44,7 +44,7 @@ teardown:
 ### Demo stuff
 
 demo-app:
-	cd ./demo/app && mvn package
+	cd ./demo/app && mvn package -Ddocker.goal=dockerBuild
 
 demo-exporter:
 	cd demo/exporter && \
