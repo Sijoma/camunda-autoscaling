@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: starter
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/starter:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/starter:SNAPSHOT"
           imagePullPolicy: IfNotPresent
           env:
             - name: JDK_JAVA_OPTIONS

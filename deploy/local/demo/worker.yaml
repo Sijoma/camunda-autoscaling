@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: welcome-email-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -66,7 +66,7 @@ spec:
     spec:
       containers:
         - name: notify-customer-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: create-user-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -162,7 +162,7 @@ spec:
     spec:
       containers:
         - name: cleanup-users-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -210,7 +210,7 @@ spec:
     spec:
       containers:
         - name: validate-payment-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -258,7 +258,7 @@ spec:
     spec:
       containers:
         - name: verify-email-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
