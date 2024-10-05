@@ -30,7 +30,6 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          architecture: x64
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -53,5 +52,5 @@ jobs:
           context: demo/exporter
           tags: ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:${{  github.ref_name }}
           push: true
-          platforms: "linux/amd64,linux/arm64,darwin"
+          platforms: "linux/amd64,linux/arm64"
           provenance: false
