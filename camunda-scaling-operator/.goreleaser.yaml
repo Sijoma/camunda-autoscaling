@@ -23,7 +23,7 @@ dockers:
       - "--label=org.opencontainers.image.revision={{.FullCommit}}"
       - "--label=org.opencontainers.image.version={{.Tag}}"
     image_templates:
-      - "ghcr.io/sijoma/camunda-scaling-operator:{{ .Tag }}"
+      - "ghcr.io/sijoma/camunda-autoscaling-hackday/camunda-scaling-operator:{{ .Tag }}"
 
 release:
   prerelease: auto
