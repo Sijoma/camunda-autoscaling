@@ -1,10 +1,11 @@
 # Demo
 
-The demo will deploy the [sign-up-process.bpmn](./sign-up-process.bpmn) process, modeling a user sign up flow for the 
-premiere German cooking streaming service, Mettflix. This project provides deployment files to set up and operate the 
+The demo will deploy the [sign-up-process.bpmn](worker/src/main/resources/bpmn/demo/sign-up-process.bpmn) process,
+modeling a user sign up flow for the
+premiere German cooking streaming service, Mettflix. This project provides deployment files to set up and operate the
 demo application - _not the C8 cluster!_
 
-![sign-up-process](./sign-up-process.png)
+![sign-up-process](worker/src/main/resources/bpmn/demo/sign-up-process.png)
 
 ## Pre-requisites
 
@@ -20,7 +21,7 @@ Helm is used to deploy the demo application, and Docker is used to build custom 
 
 ## Building the exporter
 
-You can build the standalone exporter using `make build-demo-exporter`. This will
+You can build the standalone exporter using `make demo-exporter`. This will
 build the exporter JAR, as well as a Docker image which is to be used as an init container
 to copy the exporter over to the broker.
 
@@ -30,5 +31,5 @@ The starter/worker applications are based on the Zeebe team's benchmark applicat
 We build custom Docker images as we want to ship custom BPMN processes and payload for our
 own application.
 
-To build the customer applications, run `make demo-images`. This will build and push the Docker
-images to the zeebe-io GCR repository.
+To build the customer applications, run `make demo-app`, which will build the Docker images
+locally.

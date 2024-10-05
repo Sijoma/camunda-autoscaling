@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.github.sijoma</groupId>
-  <artifactId>demo-worker</artifactId>
+  <artifactId>demo-app</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
-  <name>Demo Worker</name>
+  <name>Demo App</name>
   <url>https://github.com/Sijoma/camunda-autoscaling-hackday</url>
   <inceptionYear>2024</inceptionYear>
 
@@ -194,13 +194,46 @@
           <from>
             <image>eclipse-temurin:21-jre</image>
           </from>
-          <to>
-            <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
-          </to>
-          <container>
-            <mainClass>io.camunda.zeebe.DemoWorker</mainClass>
+          <container combine.children="append">
+            <labels>
+              <label>org.opencontainers.image.source=https://github.com/Sijoma/camunda-autoscaling-hackday</label>
+            </labels>
           </container>
         </configuration>
+        <executions>
+          <!-- starter image -->
+          <execution>
+            <id>starter</id>
+            <phase>package</phase>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+            <configuration>
+              <to>
+                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/starter:${docker.tag}</image>
+              </to>
+              <container>
+                <mainClass>io.camunda.zeebe.DemoStarter</mainClass>
+              </container>
+            </configuration>
+          </execution>
+          <!-- worker image -->
+          <execution>
+            <id>worker</id>
+            <phase>package</phase>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+            <configuration>
+              <to>
+                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
+              </to>
+              <container>
+                <mainClass>io.camunda.zeebe.DemoWorker</mainClass>
+              </container>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
