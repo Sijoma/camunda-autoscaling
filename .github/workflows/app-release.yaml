@@ -32,4 +32,5 @@ jobs:
       - name: Run maven build & docker build & docker push
         run: |
           cd demo/app && \
+          mvn package -B -DskipTests -DskipChecks -T1C -Pmulti-platform -Ddocker.goal=build -Ddocker.tag=${{ github.ref_name }} && \
           mvn package -B -DskipTests -DskipChecks -T1C -Pmulti-platform -Ddocker.goal=build -Ddocker.tag=${{ github.ref_name }}

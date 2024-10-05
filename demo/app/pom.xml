@@ -217,7 +217,11 @@
             </goals>
             <configuration>
               <to>
-                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/starter:${docker.tag}</image>
+                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/starter</image>
+                <tags>
+                  <tag>SNAPSHOT</tag>
+                  <tag>${docker.tag}</tag>
+                </tags>
               </to>
               <container>
                 <mainClass>io.camunda.zeebe.DemoStarter</mainClass>
@@ -233,7 +237,11 @@
             </goals>
             <configuration>
               <to>
-                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker:${docker.tag}</image>
+                <image>ghcr.io/sijoma/camunda-autoscaling-hackday/worker</image>
+                <tags>
+                  <tag>SNAPSHOT</tag>
+                  <tag>${docker.tag}</tag>
+                </tags>
               </to>
               <container>
                 <mainClass>io.camunda.zeebe.DemoWorker</mainClass>
