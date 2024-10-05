@@ -10,10 +10,10 @@ global:
 
 zeebe:
   clusterSize: "3"
-  partitionCount: "3"
+  partitionCount: "6"
   replicationFactor: "3"
-  cpuThreadCount: 3
-  ioThreadCount: 3
+  cpuThreadCount: 6
+  ioThreadCount: 6
 
   image:
     tag: 8.6.0
@@ -71,6 +71,8 @@ zeebe:
       value: "com.github.sijoma.exporter.JobMetricExporter"
     - name: ZEEBE_BROKER_EXPORTERS_JOBMETRIC_JARPATH
       value: "/usr/local/zeebe/exporters/job-metric-exporter.jar"
+    - name: ZEEBE_BROKER_EXPERIMENTAL_ROCKSDB_MEMORYLIMIT
+      value: 128MB
 
   resources:
     limits:
@@ -83,6 +85,17 @@ zeebe:
   pvcAccessMode: [ "ReadWriteOnce" ]
   pvcSize: 32Gi
   pvcStorageClassName: ssd
+
+  podSecurityContext:
+    runAsNonRoot: false
+    fsGroup: 0
+
+  containerSecurityContext:
+    allowPrivilegeEscalation: true
+    privileged: true
+    readOnlyRootFilesystem: false
+    runAsNonRoot: false
+    runAsUser: 0
 
 zeebeGateway:
   replicas: 2

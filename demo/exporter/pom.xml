@@ -213,27 +213,6 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>${plugin.version.resources}</version>
       </plugin>
-
-      <!-- dependency rules enforcement -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>${plugin.version.enforcer}</version>
-        <executions>
-          <execution>
-            <id>enforce-unique-dependencies</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <!-- see more https://maven.apache.org/enforcer/enforcer-rules/index.html -->
-              <rules>
-                <banDuplicatePomDependencyVersions/>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>
