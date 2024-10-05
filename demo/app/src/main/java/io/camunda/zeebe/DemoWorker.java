@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Future;
@@ -77,16 +78,6 @@ public final class DemoWorker extends Worker {
       final BlockingQueue<Future<?>> requestFutures) {
     return (jobClient, job) -> {
       final long startHandlingTime = System.currentTimeMillis();
-      if (workerCfg.isSendMessage()) {
-        final var correlationKey =
-            job.getVariable(workerCfg.getCorrelationKeyVariableName()).toString();
-
-        final boolean messagePublishedSuccessfully = publishMessage(client, correlationKey);
-        if (!messagePublishedSuccessfully) {
-          return;
-        }
-      }
-
       final var command = jobClient.newCompleteCommand(job.getKey()).variables(variables);
       addDelayToCompletion(completionDelay, startHandlingTime);
       requestFutures.add(command.send());
