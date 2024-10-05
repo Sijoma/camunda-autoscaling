@@ -5,7 +5,7 @@ modeling a user sign up flow for the
 premiere German cooking streaming service, Mettflix. This project provides deployment files to set up and operate the
 demo application - _not the C8 cluster!_
 
-![sign-up-process](worker/src/main/resources/bpmn/demo/sign-up-process.png)
+![sign-up-process](./sign-up-process.png)
 
 ## Pre-requisites
 
