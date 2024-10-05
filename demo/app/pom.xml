@@ -192,9 +192,9 @@
         <artifactId>jib-maven-plugin</artifactId>
         <version>${plugin.version.jib}</version>
         <configuration combine.children="append">
-          <from combine.children="append">
+          <from>
             <image>eclipse-temurin:21-jre-noble</image>
-            <platforms combine.children="append">
+            <platforms>
               <platform>
                 <architecture>amd64</architecture>
                 <os>linux</os>
@@ -256,7 +256,12 @@
             <version>${plugin.version.jib}</version>
             <configuration>
               <from>
+                <image>eclipse-temurin:21-jre-noble</image>
                 <platforms combine.children="append">
+                  <platform>
+                    <architecture>amd64</architecture>
+                    <os>linux</os>
+                  </platform>
                   <platform>
                     <architecture>arm64</architecture>
                     <os>linux</os>
