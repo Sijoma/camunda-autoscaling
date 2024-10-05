@@ -1,10 +1,122 @@
-connectors:
+global:
+  multitenancy:
+    enabled: false
+  image:
+    tag: 8.6.0
+    pullPolicy: IfNotPresent
+  identity:
+    auth:
+      enabled: false
+
+zeebe:
+  clusterSize: "3"
+  partitionCount: "3"
+  replicationFactor: "3"
+  cpuThreadCount: 3
+  ioThreadCount: 3
+
+  image:
+    tag: 8.6.0
+
+  javaOpts: >-
+    -XX:MaxRAMPercentage=25.0
+    -XX:+ExitOnOutOfMemoryError
+    -XX:+HeapDumpOnOutOfMemoryError
+    -XX:HeapDumpPath=/usr/local/zeebe/data
+    -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log
+    -Xlog:gc*:file=/usr/local/zeebe/data/gc.log:time:filecount=7,filesize=8M
+
+  extraVolumes:
+    - name: zeebe-exporters
+      emptyDir: {}
+
+  extraVolumeMounts:
+    - name: zeebe-exporters
+      mountPath: /usr/local/zeebe/exporters
+
+  extraInitContainers:
+    - name: job-metric-exporter
+      image: ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:autoscaling-demo
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - name: zeebe-exporters
+          mountPath: /exporters
+
+  retention:
+    enabled: true
+    minimumAge: 10m
+
+  env:
+    - name: K8S_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: K8S_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: ZEEBE_LOG_APPENDER
+      value: Stackdriver
+    - name: ZEEBE_LOG_STACKDRIVER_SERVICENAME
+      value: zeebe
+    - name: ZEEBE_LOG_STACKDRIVER_SERVICEVERSION
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ATOMIX_LOG_LEVEL
+      value: INFO
+    - name: ZEEBE_LOG_LEVEL
+      value: DEBUG
+    - name: ZEEBE_BROKER_EXPORTERS_JOBMETRIC_CLASSNAME
+      value: "com.github.sijoma.exporter.JobMetricExporter"
+    - name: ZEEBE_BROKER_EXPORTERS_JOBMETRIC_JARPATH
+      value: "/usr/local/zeebe/exporters/job-metric-exporter.jar"
+
+  resources:
+    limits:
+      cpu: 1350m
+      memory: 4Gi
+    requests:
+      cpu: 1350m
+      memory: 4Gi
+
+  pvcAccessMode: [ "ReadWriteOnce" ]
+  pvcSize: 32Gi
+  pvcStorageClassName: ssd
+
+zeebeGateway:
+  replicas: 2
+  logLevel: debug
+
+  image:
+    tag: 8.6.0
+
+  env:
+    - name: ZEEBE_LOG_APPENDER
+      value: Stackdriver
+    - name: ZEEBE_LOG_STACKDRIVER_SERVICENAME
+      value: zeebe
+    - name: ZEEBE_LOG_STACKDRIVER_SERVICEVERSION
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: ATOMIX_LOG_LEVEL
+      value: INFO
+    - name: ZEEBE_LOG_LEVEL
+      value: DEBUG
+
+  resources:
+    limits:
+      cpu: 450m
+      memory: 1Gi
+    requests:
+      cpu: 450m
+      memory: 1Gi
+
+console:
   enabled: false
 
 operate:
-  enabled: false
-
-optimize:
   enabled: false
 
 tasklist:
@@ -16,39 +128,52 @@ identity:
 identityKeycloak:
   enabled: false
 
-elasticsearch:
+optimize:
   enabled: false
 
-global:
-  multitenancy:
-    enabled: false
-  elasticsearch:
-    enabled: false
-  identity:
-    auth:
-      enabled: false
+connectors:
+  enabled: false
 
-zeebe:
-  clusterSize: "3"
-  partitionCount: "3"
-  replicationFactor: "3"
-  # https://hub.docker.com/r/camunda/zeebe/tags
-  image:
-    tag: 8.5.3
+webModeler:
+  enabled: false
 
-  affinity:
-    podAntiAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        - labelSelector:
-            matchExpressions:
-              - key: "app.kubernetes.io/component"
-                operator: In
-                values:
-                  - blabla
-          topologyKey: "kubernetes.io/hostname"
+postgresql:
+  enabled: false
 
-zeebeGateway:
-  replicas: 1
-  # https://hub.docker.com/r/camunda/zeebe/tags
-  image:
-    tag: 8.5.3
+# ELASTIC
+elasticsearch:
+  enabled: true
+  imageTag: 8.9.2
+
+  master:
+    fullnameOverride: elastic
+    nameOverride: elastic
+    replicaCount: 3
+    pdb:
+      minAvailable: 2
+    heapSize: 3g
+    resources:
+      requests:
+        cpu: 1
+        memory: 3Gi
+      limits:
+        cpu: 2
+        memory: 6Gi
+    persistence:
+      storageClass: "ssd"
+      size: 16Gi
+      accessModes: [ "ReadWriteOnce" ]
+
+prometheusServiceMonitor:
+  enabled: true
+  labels:
+    release: monitoring
+  scrapeInterval: 30s
+
+prometheus-elasticsearch-exporter:
+  es:
+    uri: "http://{{ .Release.Name }}-elasticsearch:9200"
+  serviceMonitor:
+    enabled: true
+    labels:
+      release: monitoring

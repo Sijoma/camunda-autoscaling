@@ -26,8 +26,17 @@ deploy-metrics-server:
 deploy-keda:
 	kustomize build ./deploy/local/keda | kubectl apply --server-side -f -
 
+deploy-demo:
+	kubectl apply -f ./deploy/local/demo
+
 undeploy-camunda:
 	kustomize build --enable-helm ./deploy/local/camunda | kubectl delete -f -
+
+undeploy-demo:
+	kubectl delete -f ./deploy/local/demo
+
+undeploy-keda:
+	kustomize build --enable-helm ./deploy/local/keda | kubectl delete -f -
 
 teardown:
 	kind delete cluster --name hackdays
@@ -65,3 +74,8 @@ deploy-demo:
 clean-demo:
 	helmfile -f demo/deployment/helmfile.yaml destroy && \
 	kubectl get pvc -n demo --no-headers=true -o custom-columns=":metadata.name" | xargs -n1 kubectl -n demo delete pvc
+
+deploy-operator:
+	cd camunda-scaling-operator/deploy/local && \
+	kustomize edit set image controller=ghcr.io/sijoma/camunda-scaling-operator:v0.0.3 && \
+    kustomize build . | kubectl apply -f -

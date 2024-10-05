@@ -1,0 +1,291 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: welcome-email-worker
+  labels:
+    app: welcome-email-worker
+spec:
+  selector:
+    matchLabels:
+      app: welcome-email-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: welcome-email-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: welcome-email-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="welcome-email"
+                  -Dapp.worker.jobType="send-welcome-email"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=100ms
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notify-customer-worker
+  labels:
+    app: notify-customer-worker
+spec:
+  selector:
+    matchLabels:
+      app: notify-customer-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: notify-customer-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: notify-customer-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="notify-customer"
+                  -Dapp.worker.jobType="notify-customer-failure"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=50ms
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: create-user-worker
+  labels:
+    app: create-user-worker
+spec:
+  selector:
+    matchLabels:
+      app: create-user-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: create-user-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: create-user-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="create-user"
+                  -Dapp.worker.jobType="create-unverified-user"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=10ms
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cleanup-users-worker
+  labels:
+    app: cleanup-users-worker
+spec:
+  selector:
+    matchLabels:
+      app: cleanup-users-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: cleanup-users-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: cleanup-users-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="cleanup-users"
+                  -Dapp.worker.jobType="clean-unverified-user"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=10ms
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validate-payment-worker
+  labels:
+    app: validate-payment-worker
+spec:
+  selector:
+    matchLabels:
+      app: validate-payment-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: validate-payment-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: validate-payment-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="validate-payment"
+                  -Dapp.worker.jobType="validate-payment-info"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=500ms
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: verify-email-worker
+  labels:
+    app: verify-email-worker
+spec:
+  selector:
+    matchLabels:
+      app: verify-email-worker
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: verify-email-worker
+        app.kubernetes.io/component: zeebe-client
+    spec:
+      containers:
+        - name: verify-email-worker
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:autoscaling-demo"
+          imagePullPolicy: Always
+          env:
+            - name: JDK_JAVA_OPTIONS
+              value: >-
+                  -Dconfig.override_with_env_vars=true
+                  -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
+                  -Dzeebe.client.requestTimeout=62000
+                  -Dapp.worker.capacity=10
+                  -Dapp.worker.pollingDelay=1ms
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.workerName="verify-email"
+                  -Dapp.worker.jobType="send-verification-email"
+                  -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
+                  -Dapp.worker.completionDelay=1s
+                  -Dapp.worker.sendMessage=true
+                  -Dapp.worker.messageName="verify-email"
+                  -Dapp.worker.correlationKeyVariableName="email"
+                  -XX:+HeapDumpOnOutOfMemoryError
+            - name: LOG_LEVEL
+              value: "INFO"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 256Mi
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          ports:
+            - containerPort: 9600
+              name: "http"

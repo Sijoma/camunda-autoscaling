@@ -5,9 +5,8 @@ metadata:
 name: camunda-platform
 repo: https://helm.camunda.io
 version: 10.2.1
-# NOTE: We should use "nameTemplate" not "releaseName" to keep the names as same as using Helm CLI.
-nameTemplate: camunda-platform
-namespace: camunda-platform
+namespace: demo
+releaseName: camunda-platform
 IncludeCRDs: true
 valuesMerge: merge
 valuesFile: camunda-values.yaml

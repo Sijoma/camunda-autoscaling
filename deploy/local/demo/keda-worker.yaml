@@ -1,0 +1,330 @@
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: validate-payment-worker
+spec:
+  scaleTargetRef:
+    name: validate-payment-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="validate-payment-info"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="validate-payment-info"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="validate-payment-info"}) by (namespace, jobType)) * 100
+        threshold: '50'
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: welcome-email-worker
+spec:
+  scaleTargetRef:
+    name: welcome-email-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="send-welcome-email"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="send-welcome-email"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="send-welcome-email"}) by (namespace, jobType)) * 100
+        threshold: '50'
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: notify-customer-worker
+spec:
+  scaleTargetRef:
+    name: notify-customer-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="notify-customer-failure"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="notify-customer-failure"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="notify-customer-failure"}) by (namespace, jobType)) * 100
+        threshold: '50'
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: create-user-worker
+spec:
+  scaleTargetRef:
+    name: create-user-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="create-unverified-user"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="create-unverified-user"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="create-unverified-user"}) by (namespace, jobType)) * 100
+        threshold: '50'
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: cleanup-users-worker
+spec:
+  scaleTargetRef:
+    name: cleanup-users-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="clean-unverified-user"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="clean-unverified-user"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="clean-unverified-user"}) by (namespace, jobType)) * 100
+        threshold: '50'
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: verify-email-worker
+spec:
+  scaleTargetRef:
+    name: verify-email-worker
+  pollingInterval:  10
+  cooldownPeriod:   30
+  initialCooldownPeriod: 0
+  idleReplicaCount: 0
+  minReplicaCount:  1
+  maxReplicaCount:  3
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleUp:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+        scaleDown:
+          stabilizationWindowSeconds: 60
+          policies:
+            - type: Pods
+              value: 1
+              periodSeconds: 10
+    scalingModifiers:
+      formula: "jobs_used_capacity_metric > 0 ? jobs_used_capacity_metric : (jobs_available_metric + jobs_activated_rate > 0 ? 2 : 0)"
+      target: "50"
+      activationTarget: "1"
+      metricType: "Value"
+  triggers:
+    - type: prometheus
+      name: jobs_available_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="send-verification-email"}) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_activated_rate
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="send-verification-email"}[10s])) by (namespace, jobType)
+        threshold: '1'
+        activationThreshold: '1'
+    - type: prometheus
+      name: jobs_used_capacity_metric
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc:9090
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="send-verification-email"}) by (namespace, jobType)) * 100
+        threshold: '50'

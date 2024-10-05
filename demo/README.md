@@ -13,9 +13,7 @@ as well as the publicly available [benchmark Helm chart](https://github.com/zeeb
 
 You will need:
 
-- Helm 3.14+ installed
 - Docker 27+
-- Helmfile v0.168+
 - Java 21.0.3+
 
 Helm is used to deploy the demo application, and Docker is used to build custom application images.
@@ -34,10 +32,3 @@ own application.
 
 To build the customer applications, run `make demo-images`. This will build and push the Docker
 images to the zeebe-io GCR repository.
-
-## Deploying the demo
-
-Currently, you can deploy the demo using Helmfile. Just run `make deploy-demo`.
-This will deploy the Zeebe team's `benchmark-helm` chart (based on the official Camunda 8
-Helm charts), as well as all the workers/start deployments we will need for testing, along with
-the custom job metric exporter.
