@@ -1,0 +1,41 @@
+name: Job Metrics Exporter Release Publish
+
+on:
+  push:
+    tags:
+      - '*'
+
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21 for x64
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          architecture: x64
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run maven build & docker build & docker push
+        run: |
+          cd demo/exporter && \
+          mvn package -DskipTests -DskipChecks -T1C 
+          docker build -t "ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:${{  github.ref_name }}" .
+          docker push "ghcr.io/sijoma/camunda-autoscaling-hackday/job-metric-exporter:${{  github.ref_name }}"
