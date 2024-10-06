@@ -15,6 +15,12 @@ spec:
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
+    - jsonPath: .spec.replicas
+      name: Desired Replicas
+      type: string
+    - jsonPath: .status.replicas
+      name: Current Replicas
+      type: string
     - jsonPath: .status.conditions[?(@.type=='ReadyToScale')].status
       name: Ready To Scale
       type: string
@@ -47,25 +53,30 @@ spec:
             description: ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
             properties:
               replicas:
+                description: Replicas the number of Zeebe brokers to deploy
                 format: int32
                 type: integer
               zeebeRef:
-                default:
-                  gateway:
-                    port: 9600
-                    serviceName: camunda-platform-zeebe-gateway
-                  name: camunda-platform-zeebe
+                default: {}
                 description: ZeebeRef references that exists in the same namespace.
                 properties:
                   gateway:
+                    default: {}
                     properties:
                       port:
+                        default: 9600
+                        description: Port of the zeebe-gateway, needs to expose the
+                          management API
                         format: int32
                         type: integer
                       serviceName:
+                        default: camunda-platform-zeebe-gateway
+                        description: ServiceName of the zeebe-gateway, this is used
+                          to trigger scaling operations & request topology information
                         type: string
                     type: object
                   name:
+                    default: camunda-platform-zeebe
                     description: Name of the Zeebe statefulset to scale
                     minLength: 1
                     type: string

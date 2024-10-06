@@ -1,6 +1,7 @@
 apiVersion: camunda.sijoma.dev/v1alpha1
 kind: ZeebeAutoscaler
 metadata:
-  name: zeebeautoscaler-sample
+  name: camunda-platform-zeebe
+  namespace: demo
 spec:
   replicas: 3

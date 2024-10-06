@@ -53,55 +53,24 @@
                 <div class="collapse-group">
                     <details class="collapse-panel">
                         <div id="yaml-v1alpha1" class="collapse-content">
-                            <pre class="language-yaml"><code class="language-yaml"># APIVersion defines the versioned schema of this representation of an object.
-# Servers should convert recognized schemas to the latest internal value, and
-# may reject unrecognized values.
-# More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
-apiVersion: camunda.sijoma.dev/v1alpha1
-# Kind is a string value representing the REST resource this object represents.
-# Servers may infer this from the endpoint the client submits requests to.
-# Cannot be updated.
-# In CamelCase.
-# More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+                            <pre class="language-yaml"><code class="language-yaml">apiVersion: camunda.sijoma.dev/v1alpha1
 kind: ZeebeAutoscaler
 metadata: {}
-# ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
 spec:
   replicas: 1
-  # ZeebeRef references that exists in the same namespace.
   zeebeRef:
     gateway:
-      port: 1
-      serviceName: string
-    # Name of the Zeebe statefulset to scale
-    name: string
-# ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler
+      port: 9600
+      serviceName: &#34;camunda-platform-zeebe-gateway&#34;
+    name: &#34;camunda-platform-zeebe&#34;
 status:
-  # Conditions holds the information on the last operations on Zeebe that can be useful during scaling
   conditions:
   - lastTransitionTime: string
-    # message is a human readable message indicating details about the transition.
-    # This may be an empty string.
     message: string
-    # observedGeneration represents the .metadata.generation that the condition was set based upon.
-    # For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-    # with respect to the current state of the instance.
     observedGeneration: 0
-    # reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
-    # Producers of specific condition types may define expected values and meanings for this field,
-    # and whether the values are considered a guaranteed API.
-    # The value should be a CamelCase string.
-    # This field may not be empty.
-    reason: b # ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-    # status of the condition, one of True, False, Unknown.
+    reason: yID_G # ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
     status: &#34;True&#34;
-    # type of condition in CamelCase or in foo.example.com/CamelCase.
-    # ---
-    # Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-    # useful (see .node.status.conditions), the ability to deconflict is important.
-    # The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
-    type: twa2m7/iMV9 # ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-  # ObservedGeneration is the last observed generation by the controller.
+    type: n2 # ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
   observedGeneration: 1
   replicas: 1
   selector: string
@@ -219,7 +188,7 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
     </summary>
     <div id="replicas" class="collapse-content">
         <div class="property-description">
-            <p></p>
+            <p>Replicas the number of Zeebe brokers to deploy</p>
         </div>
         <div class="collapse-group">
             
@@ -237,7 +206,7 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
         
         
         
-        <kbd class="text-primary">{&#34;gateway&#34;:{&#34;port&#34;:9600,&#34;serviceName&#34;:&#34;camunda-platform-zeebe-gateway&#34;},&#34;name&#34;:&#34;camunda-platform-zeebe&#34;}</kbd>
+        <kbd class="text-primary">{}</kbd>
         
         
     </summary>
@@ -255,6 +224,8 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
         gateway <kbd class="text-muted">object</kbd>
         
         
+        
+        <kbd class="text-primary">{}</kbd>
         
         
     </summary>
@@ -275,11 +246,13 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
         
         
         
+        <kbd class="text-primary">9600</kbd>
+        
         
     </summary>
     <div id="port" class="collapse-content">
         <div class="property-description">
-            <p></p>
+            <p>Port of the zeebe-gateway, needs to expose the management API</p>
         </div>
         <div class="collapse-group">
             
@@ -297,11 +270,13 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
         
         
         
+        <kbd class="text-primary">&#34;camunda-platform-zeebe-gateway&#34;</kbd>
+        
         
     </summary>
     <div id="serviceName" class="collapse-content">
         <div class="property-description">
-            <p></p>
+            <p>ServiceName of the zeebe-gateway, this is used to trigger scaling operations &amp; request topology information</p>
         </div>
         <div class="collapse-group">
             
@@ -325,6 +300,8 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
         name <kbd class="text-muted">string</kbd>
         
         
+        
+        <kbd class="text-primary">&#34;camunda-platform-zeebe&#34;</kbd>
         
         
     </summary>
