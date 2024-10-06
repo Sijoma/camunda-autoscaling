@@ -286,7 +286,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  20
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:

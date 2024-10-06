@@ -26,12 +26,12 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=15
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="welcome-email"
                   -Dapp.worker.jobType="send-welcome-email"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=100ms
+                  -Dapp.worker.completionDelay=50ms
                   -Dapp.worker.timeout=5s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
@@ -74,7 +74,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=10
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="notify-customer"
                   -Dapp.worker.jobType="notify-customer-failure"
@@ -122,12 +122,12 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=100
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="create-user"
                   -Dapp.worker.jobType="create-unverified-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=10ms
+                  -Dapp.worker.completionDelay=50ms
                   -Dapp.worker.timeout=5s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
@@ -170,12 +170,12 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=10
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="cleanup-users"
                   -Dapp.worker.jobType="clean-unverified-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=10ms
+                  -Dapp.worker.completionDelay=50ms
                   -Dapp.worker.timeout=5s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
@@ -218,12 +218,12 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=20
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="validate-payment"
                   -Dapp.worker.jobType="validate-payment-info"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=500ms
+                  -Dapp.worker.completionDelay=50ms
                   -Dapp.worker.timeout=15s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
@@ -266,7 +266,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=10
+                  -Dapp.worker.capacity=30
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="verify-email"
                   -Dapp.worker.jobType="send-verification-email"
