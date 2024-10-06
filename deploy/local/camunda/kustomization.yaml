@@ -6,7 +6,7 @@ namespace: demo
 resources:
   - namespace.yaml
 # Only enable if you have the camunda-scaling-operator installed
-#  - camunda_v1alpha1_zeebeautoscaler.yaml
+  - camunda_v1alpha1_zeebeautoscaler.yaml
 
 generators:
   - camunda-chart.yaml
