@@ -4,6 +4,10 @@ metadata:
   name: camunda-platform-zeebe
 spec:
   replicas: 3
+  # ZeebeRef references that exists in the same namespace.
   zeebeRef:
-    # This is the StatefulSet name of Zeebe
+    gateway:
+      port: 9600
+      serviceName: camunda-platform-zeebe-gateway
+    # Name of the Zeebe statefulset to scale
     name: camunda-platform-zeebe

@@ -1,4 +1,5 @@
 global:
+  createReleaseInfo: false
   multitenancy:
     enabled: false
   image:
@@ -7,6 +8,8 @@ global:
   identity:
     auth:
       enabled: false
+  elasticsearch:
+    enabled: false
 
 zeebe:
   clusterSize: "3"
@@ -73,6 +76,14 @@ zeebe:
       value: "/usr/local/zeebe/exporters/job-metric-exporter.jar"
     - name: ZEEBE_BROKER_EXPERIMENTAL_ROCKSDB_MEMORYLIMIT
       value: 128MB
+    - name: ZEEBE_BROKER_EXECUTIONMETRICSEXPORTERENABLED
+      value: "true"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_ENABLED
+      value: "true"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_LIMIT
+      value: "6000"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_THROTTLING_ENABLED
+      value: "false"
 
   resources:
     limits:
@@ -121,10 +132,10 @@ zeebeGateway:
   resources:
     limits:
       cpu: 450m
-      memory: 1Gi
+      memory: 2Gi
     requests:
       cpu: 450m
-      memory: 1Gi
+      memory: 2Gi
 
 console:
   enabled: false
@@ -155,26 +166,24 @@ postgresql:
 
 # ELASTIC
 elasticsearch:
-  enabled: true
+  enabled: false
   imageTag: 8.9.2
 
   master:
     fullnameOverride: elastic
     nameOverride: elastic
-    replicaCount: 3
-    pdb:
-      minAvailable: 2
-    heapSize: 3g
+    replicaCount: 1
+    heapSize: 6g
     resources:
       requests:
-        cpu: 1
-        memory: 3Gi
+        cpu: 4
+        memory: 9Gi
       limits:
-        cpu: 2
-        memory: 6Gi
+        cpu: 4
+        memory: 9Gi
     persistence:
       storageClass: "ssd"
-      size: 16Gi
+      size: 32Gi
       accessModes: [ "ReadWriteOnce" ]
 
 prometheusServiceMonitor:
