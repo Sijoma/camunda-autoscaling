@@ -122,7 +122,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=10
+                  -Dapp.worker.capacity=100
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="create-user"
                   -Dapp.worker.jobType="create-unverified-user"

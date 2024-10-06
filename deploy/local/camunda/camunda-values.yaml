@@ -73,6 +73,20 @@ zeebe:
       value: "/usr/local/zeebe/exporters/job-metric-exporter.jar"
     - name: ZEEBE_BROKER_EXPERIMENTAL_ROCKSDB_MEMORYLIMIT
       value: 128MB
+    - name: ZEEBE_BROKER_EXECUTIONMETRICSEXPORTERENABLED
+      value: "true"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_ENABLED
+      value: "true"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_LIMIT
+      value: "1000"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_THROTTLING_ENABLED
+      value: "true"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_THROTTLING_ACCEPTABLEBACKLOG
+      value: "100000"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_THROTTLING_MINIMUMLIMIT
+      value: "100"
+    - name: ZEEBE_BROKER_FLOWCONTROL_WRITE_THROTTLING_RESOLUTION
+      value: "15s"
 
   resources:
     limits:

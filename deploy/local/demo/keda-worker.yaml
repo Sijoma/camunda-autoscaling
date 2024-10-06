@@ -11,7 +11,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -66,7 +66,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -121,7 +121,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -176,7 +176,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -231,7 +231,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  10
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
@@ -286,7 +286,7 @@ spec:
   initialCooldownPeriod: 0
   idleReplicaCount: 0
   minReplicaCount:  1
-  maxReplicaCount:  3
+  maxReplicaCount:  20
   advanced:
     horizontalPodAutoscalerConfig:
       behavior:
