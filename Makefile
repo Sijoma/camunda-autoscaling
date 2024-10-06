@@ -27,7 +27,11 @@ deploy-keda:
 	kustomize build ./deploy/local/keda | kubectl apply --server-side -f -
 
 deploy-demo:
-	kubectl apply -f ./deploy/local/demo
+	kubectl apply -f ./deploy/local/demo && \
+	kubectl delete pod camunda-platform-operate-test-connection # unnecessary connection test
+
+deploy-worker-keda:
+	kubectl apply -f ./deploy/local/keda/worker
 
 undeploy-camunda:
 	kustomize build --enable-helm ./deploy/local/camunda | kubectl delete -f -

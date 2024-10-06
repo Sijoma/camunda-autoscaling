@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: welcome-email-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -57,7 +57,7 @@ spec:
   selector:
     matchLabels:
       app: notify-customer-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -105,7 +105,7 @@ spec:
   selector:
     matchLabels:
       app: create-user-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -153,7 +153,7 @@ spec:
   selector:
     matchLabels:
       app: cleanup-users-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -201,7 +201,7 @@ spec:
   selector:
     matchLabels:
       app: validate-payment-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
@@ -249,7 +249,7 @@ spec:
   selector:
     matchLabels:
       app: verify-email-worker
-  replicas: 0
+  replicas: 1
   template:
     metadata:
       labels:
