@@ -14,7 +14,8 @@ deploy-stack:
 	$(MAKE) deploy-camunda
 
 deploy-camunda:
-	kustomize build --enable-helm ./deploy/local/camunda | kubectl apply -f -
+	kustomize build --enable-helm ./deploy/local/camunda | kubectl apply -f - && \
+	kubectl delete pod camunda-platform-operate-test-connection # unnecessary connection test
 
 ## Needs to be run twice due to CRDs
 deploy-monitoring:
@@ -27,8 +28,7 @@ deploy-keda:
 	kustomize build ./deploy/local/keda | kubectl apply --server-side -f -
 
 deploy-demo:
-	kubectl apply -f ./deploy/local/demo && \
-	kubectl delete pod camunda-platform-operate-test-connection # unnecessary connection test
+	kubectl apply -f ./deploy/local/demo
 
 deploy-worker-keda:
 	kubectl apply -f ./deploy/local/keda/worker

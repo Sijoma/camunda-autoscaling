@@ -271,8 +271,8 @@ spec:
                   -Dapp.worker.workerName="verify-email"
                   -Dapp.worker.jobType="send-verification-email"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=1s
-                  -Dapp.worker.timeout=15s
+                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.timeout=5s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
