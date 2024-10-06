@@ -24,9 +24,10 @@ import (
 
 // ZeebeAutoscalerSpec defines the desired state of ZeebeAutoscaler
 type ZeebeAutoscalerSpec struct {
+	// Replicas the number of Zeebe brokers to deploy
 	Replicas *int32 `json:"replicas,omitempty"`
 
-	// +kubebuilder:default={name:camunda-platform-zeebe,gateway:{serviceName:camunda-platform-zeebe-gateway,port:9600}}
+	// +kubebuilder:default={}
 	ZeebeRef ZeebeRef `json:"zeebeRef,omitempty"`
 }
 
@@ -34,13 +35,19 @@ type ZeebeAutoscalerSpec struct {
 type ZeebeRef struct {
 	// Name of the Zeebe statefulset to scale
 	// +kubebuilder:validation:MinLength=1
-	Name    string  `json:"name,omitempty"`
+	// +kubebuilder:default=camunda-platform-zeebe
+	Name string `json:"name,omitempty"`
+	// +kubebuilder:default={}
 	Gateway Gateway `json:"gateway,omitempty"`
 }
 
 type Gateway struct {
+	// +kubebuilder:default=camunda-platform-zeebe-gateway
+	// ServiceName of the zeebe-gateway, this is used to trigger scaling operations & request topology information
 	ServiceName string `json:"serviceName,omitempty"`
-	Port        int32  `json:"port,omitempty"`
+	// +kubebuilder:default=9600
+	// Port of the zeebe-gateway, needs to expose the management API
+	Port int32 `json:"port,omitempty"`
 }
 
 // ZeebeAutoscalerStatus defines the observed state of ZeebeAutoscaler
@@ -89,6 +96,8 @@ func ZeebePendingTopologyChange(status string) metav1.Condition {
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
 // +kubebuilder:subresource:scale:specpath=.spec.replicas,statuspath=.status.replicas,selectorpath=.status.selector
+// +kubebuilder:printcolumn:name="Desired Replicas",type=string,JSONPath=`.spec.replicas`
+// +kubebuilder:printcolumn:name="Current Replicas",type=string,JSONPath=`.status.replicas`
 // +kubebuilder:printcolumn:name="Ready To Scale",type=string,JSONPath=`.status.conditions[?(@.type=='ReadyToScale')].status`
 // +kubebuilder:printcolumn:name="Target",type=string,JSONPath=`.spec.zeebeRef.name`
 
