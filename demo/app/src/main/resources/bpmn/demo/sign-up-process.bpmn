@@ -7,6 +7,7 @@
     <bpmn:messageFlow id="Flow_05gvfe6" name="sign up form submitted" sourceRef="Participant_15e0f4x" targetRef="Participant_1hny6d4" />
     <bpmn:messageFlow id="Flow_02t6si4" name="create process" sourceRef="Participant_1hny6d4" targetRef="Event_1694q1n" />
     <bpmn:messageFlow id="Flow_0yz5pwo" sourceRef="Activity_17sgvtl" targetRef="Participant_15e0f4x" />
+    <bpmn:messageFlow id="Flow_1y05igd" sourceRef="Activity_16kiban" targetRef="Participant_15e0f4x" />
   </bpmn:collaboration>
   <bpmn:process id="sign-up-process" name="Sign Up Process" isExecutable="true">
     <bpmn:startEvent id="Event_1694q1n" name="sign up initiated">
@@ -76,7 +77,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0rd7uts" sourceRef="Activity_1doaipk" targetRef="Event_1u2vtqt" />
     <bpmn:sequenceFlow id="Flow_0vcgu6j" sourceRef="Activity_0yzn5eg" targetRef="Activity_16kiban" />
-    <bpmn:serviceTask id="Activity_0yzn5eg" name="Send Email Verification">
+    <bpmn:serviceTask id="Activity_0yzn5eg" name="Verify Email">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="send-verification-email" />
       </bpmn:extensionElements>
@@ -89,13 +90,13 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
-    <bpmn:serviceTask id="Activity_16kiban" name="Send Welcome Email">
+    <bpmn:sendTask id="Activity_16kiban" name="Send Welcome Email">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="send-welcome-email" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0vcgu6j</bpmn:incoming>
       <bpmn:outgoing>Flow_0jaoi18</bpmn:outgoing>
-    </bpmn:serviceTask>
+    </bpmn:sendTask>
     <bpmn:boundaryEvent id="Event_0lq53uw" attachedToRef="Activity_16kiban">
       <bpmn:outgoing>Flow_10sf4mj</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0c0gstl" />
@@ -145,21 +146,22 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1bwfmos_di" bpmnElement="Activity_0yzn5eg">
         <dc:Bounds x="1100" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_138i4hn_di" bpmnElement="Activity_16kiban">
+      <bpmndi:BPMNShape id="Activity_12b9p3v_di" bpmnElement="Activity_16kiban">
         <dc:Bounds x="1350" y="370" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1e69ovr_di" bpmnElement="Event_1shsnl3">
-        <dc:Bounds x="712" y="432" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0jj4lmx_di" bpmnElement="Event_10wqj18">
-        <dc:Bounds x="402" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1yizzfy_di" bpmnElement="Event_1gehzn9">
         <dc:Bounds x="1132" y="432" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1130" y="475" width="40" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1e69ovr_di" bpmnElement="Event_1shsnl3">
+        <dc:Bounds x="712" y="432" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jj4lmx_di" bpmnElement="Event_10wqj18">
+        <dc:Bounds x="402" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0fxmn8x_di" bpmnElement="Event_0lq53uw">
         <dc:Bounds x="1382" y="432" width="36" height="36" />
@@ -247,6 +249,10 @@
       <bpmndi:BPMNEdge id="Flow_0yz5pwo_di" bpmnElement="Flow_0yz5pwo">
         <di:waypoint x="860" y="540" />
         <di:waypoint x="860" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y05igd_di" bpmnElement="Flow_1y05igd">
+        <di:waypoint x="1400" y="370" />
+        <di:waypoint x="1400" y="140" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
