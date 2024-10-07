@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: welcome-email-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -31,8 +31,8 @@ spec:
                   -Dapp.worker.workerName="welcome-email"
                   -Dapp.worker.jobType="send-welcome-email"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
-                  -Dapp.worker.timeout=5s
+                  -Dapp.worker.completionDelay=400ms
+                  -Dapp.worker.timeout=10s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
@@ -66,7 +66,7 @@ spec:
     spec:
       containers:
         - name: notify-customer-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -79,8 +79,8 @@ spec:
                   -Dapp.worker.workerName="notify-customer"
                   -Dapp.worker.jobType="notify-customer-failure"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
-                  -Dapp.worker.timeout=5s
+                  -Dapp.worker.completionDelay=400ms
+                  -Dapp.worker.timeout=10s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
@@ -114,7 +114,7 @@ spec:
     spec:
       containers:
         - name: create-user-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -127,8 +127,8 @@ spec:
                   -Dapp.worker.workerName="create-user"
                   -Dapp.worker.jobType="create-unverified-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
-                  -Dapp.worker.timeout=5s
+                  -Dapp.worker.completionDelay=400ms
+                  -Dapp.worker.timeout=10s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
@@ -162,7 +162,7 @@ spec:
     spec:
       containers:
         - name: cleanup-users-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -175,8 +175,8 @@ spec:
                   -Dapp.worker.workerName="cleanup-users"
                   -Dapp.worker.jobType="clean-unverified-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
-                  -Dapp.worker.timeout=5s
+                  -Dapp.worker.completionDelay=400ms
+                  -Dapp.worker.timeout=10s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
@@ -210,7 +210,7 @@ spec:
     spec:
       containers:
         - name: validate-payment-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -223,7 +223,7 @@ spec:
                   -Dapp.worker.workerName="validate-payment"
                   -Dapp.worker.jobType="validate-payment-info"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
+                  -Dapp.worker.completionDelay=400ms
                   -Dapp.worker.timeout=15s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
@@ -258,7 +258,7 @@ spec:
     spec:
       containers:
         - name: verify-email-worker
-          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:SNAPSHOT"
+          image: "ghcr.io/sijoma/camunda-autoscaling-hackday/worker:v0.2.3"
           imagePullPolicy: Always
           env:
             - name: JDK_JAVA_OPTIONS
@@ -271,8 +271,8 @@ spec:
                   -Dapp.worker.workerName="verify-email"
                   -Dapp.worker.jobType="send-verification-email"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
-                  -Dapp.worker.completionDelay=50ms
-                  -Dapp.worker.timeout=5s
+                  -Dapp.worker.completionDelay=400ms
+                  -Dapp.worker.timeout=10s
                   -XX:+HeapDumpOnOutOfMemoryError
             - name: LOG_LEVEL
               value: "INFO"
