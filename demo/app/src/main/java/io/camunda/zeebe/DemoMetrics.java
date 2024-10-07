@@ -6,8 +6,11 @@ import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DemoMetrics implements JobWorkerMetrics {
+  private static final Logger LOGGER = LoggerFactory.getLogger(DemoMetrics.class);
   private final AtomicReference<Double> capacityPercentageRef = new AtomicReference<>((double) 0);
   private final AtomicInteger activatedJobCount = new AtomicInteger();
   private final JobWorkerMetrics delegate;
@@ -25,18 +28,21 @@ public class DemoMetrics implements JobWorkerMetrics {
   @Override
   public void jobActivated(int count) {
     delegate.jobActivated(count);
+    LOGGER.trace("Activated {} jobs", count);
     updateCapacityPercentage(count);
   }
 
   @Override
   public void jobHandled(int count) {
     delegate.jobHandled(count);
+    LOGGER.trace("Handled {} jobs", count);
     updateCapacityPercentage(-count);
   }
 
   private void updateCapacityPercentage(final int count) {
     final var activatedCount = this.activatedJobCount.addAndGet(count);
     final double capacityPercentage = (double) activatedCount / capacity;
+    LOGGER.trace("Updating capacity to {} (count: {})", capacityPercentage * 100, activatedCount);
     capacityPercentageRef.set(capacityPercentage);
   }
 }

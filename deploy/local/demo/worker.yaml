@@ -26,7 +26,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="welcome-email"
                   -Dapp.worker.jobType="send-welcome-email"
@@ -74,7 +74,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="notify-customer"
                   -Dapp.worker.jobType="notify-customer-failure"
@@ -122,7 +122,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="create-user"
                   -Dapp.worker.jobType="create-unverified-user"
@@ -170,7 +170,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="cleanup-users"
                   -Dapp.worker.jobType="clean-unverified-user"
@@ -218,7 +218,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="validate-payment"
                   -Dapp.worker.jobType="validate-payment-info"
@@ -266,7 +266,7 @@ spec:
                   -Dconfig.override_with_env_vars=true
                   -Dapp.brokerUrl=camunda-platform-zeebe-gateway:26500
                   -Dzeebe.client.requestTimeout=62000
-                  -Dapp.worker.capacity=30
+                  -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="verify-email"
                   -Dapp.worker.jobType="send-verification-email"
