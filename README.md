@@ -1,11 +1,15 @@
-# camunda-autoscaling-hackday
+# camunda-autoscaling
 
-Hack it til you make it! ⌨️
+A proof of concept around autoscaling a Camunda orchestration cluster & Camunda applications. 
 
 This repository contains the following:
 
 - A kubernetes Operator to automate the scaling operations for Camunda inside folder `camunda-scaling-operator`
     - It currently supports scaling brokers up & down
+- A custom exporter that:
+    - tracks the count of available jobs per type as a gauge
+    - providing an absolute count per job type
+- a demo application (job worker) that reports the workers capacity with the metric: `zeebe_client_worker_job_capacity`
 - Local kind setup for testing inside the `deploy` folder.
 
 
