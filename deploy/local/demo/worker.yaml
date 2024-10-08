@@ -173,7 +173,7 @@ spec:
                   -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="cleanup-users"
-                  -Dapp.worker.jobType="clean-unverified-user"
+                  -Dapp.worker.jobType="clean-up-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
                   -Dapp.worker.completionDelay=400ms
                   -Dapp.worker.timeout=10s
@@ -269,7 +269,7 @@ spec:
                   -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="verify-email"
-                  -Dapp.worker.jobType="send-verification-email"
+                  -Dapp.worker.jobType="verify-email"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
                   -Dapp.worker.completionDelay=400ms
                   -Dapp.worker.timeout=10s
