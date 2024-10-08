@@ -76,6 +76,10 @@ public final class JobCountMetadata {
     counts.clear();
   }
 
+  public void invalidate(final long key) {
+    keyToTypeCache.invalidate(key);
+  }
+
   public byte[] serialize() {
     final var output = new ByteArrayOutputStream();
     serializer.toJson(new State(keyToTypeCache.asMap(), counts), output);

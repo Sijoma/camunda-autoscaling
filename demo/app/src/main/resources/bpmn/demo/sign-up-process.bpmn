@@ -26,9 +26,9 @@
       <bpmn:incoming>Flow_04ptmwo</bpmn:incoming>
       <bpmn:outgoing>Flow_0csfu7r</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1ygsde0" name="Create Unverified User">
+    <bpmn:serviceTask id="Activity_1ygsde0" name="Create User">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="create-unverified-user" />
+        <zeebe:taskDefinition type="create-user" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0csfu7r</bpmn:incoming>
       <bpmn:outgoing>Flow_1adex86</bpmn:outgoing>
@@ -65,9 +65,9 @@
       <bpmn:incoming>Flow_1fysasa</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1j6s1n4" sourceRef="Event_1gehzn9" targetRef="Activity_1doaipk" />
-    <bpmn:serviceTask id="Activity_1doaipk" name="Clean Up Unverified User">
+    <bpmn:serviceTask id="Activity_1doaipk" name="Clean Up User">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="clean-unverified-user" />
+        <zeebe:taskDefinition type="clean-up-user" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1j6s1n4</bpmn:incoming>
       <bpmn:outgoing>Flow_0rd7uts</bpmn:outgoing>
@@ -79,17 +79,11 @@
     <bpmn:sequenceFlow id="Flow_0vcgu6j" sourceRef="Activity_0yzn5eg" targetRef="Activity_16kiban" />
     <bpmn:serviceTask id="Activity_0yzn5eg" name="Verify Email">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="send-verification-email" />
+        <zeebe:taskDefinition type="verify-email" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1adex86</bpmn:incoming>
       <bpmn:outgoing>Flow_0vcgu6j</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:boundaryEvent id="Event_1gehzn9" name="after 1H" attachedToRef="Activity_0yzn5eg">
-      <bpmn:outgoing>Flow_1j6s1n4</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1gd3r8h">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
     <bpmn:sendTask id="Activity_16kiban" name="Send Welcome Email">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="send-welcome-email" />
@@ -100,6 +94,10 @@
     <bpmn:boundaryEvent id="Event_0lq53uw" attachedToRef="Activity_16kiban">
       <bpmn:outgoing>Flow_10sf4mj</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0c0gstl" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1gehzn9" attachedToRef="Activity_0yzn5eg">
+      <bpmn:outgoing>Flow_1j6s1n4</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1id4stm" />
     </bpmn:boundaryEvent>
   </bpmn:process>
   <bpmn:error id="Error_1fmivqo" name="Invalid Credit Card Information" errorCode="invalid-credit-info" />
@@ -121,6 +119,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_092arr3_di" bpmnElement="Activity_1ygsde0">
         <dc:Bounds x="680" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0h2ztvz_di" bpmnElement="Event_0h2ztvz">
         <dc:Bounds x="1582" y="392" width="36" height="36" />
@@ -151,12 +150,6 @@
       <bpmndi:BPMNShape id="Activity_12b9p3v_di" bpmnElement="Activity_16kiban">
         <dc:Bounds x="1350" y="370" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1yizzfy_di" bpmnElement="Event_1gehzn9">
-        <dc:Bounds x="1132" y="432" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1130" y="475" width="40" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1e69ovr_di" bpmnElement="Event_1shsnl3">
         <dc:Bounds x="712" y="432" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -165,6 +158,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0fxmn8x_di" bpmnElement="Event_0lq53uw">
         <dc:Bounds x="1382" y="432" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1meh9xp_di" bpmnElement="Event_1gehzn9">
+        <dc:Bounds x="1132" y="432" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1130" y="475" width="40" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_04ptmwo_di" bpmnElement="Flow_04ptmwo">
         <di:waypoint x="268" y="410" />

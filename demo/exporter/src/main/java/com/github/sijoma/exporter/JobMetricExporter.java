@@ -86,6 +86,10 @@ public final class JobMetricExporter implements Exporter {
             jobCounters.increment(jobRecord.getKey(), type);
           }
           break;
+        case COMPLETED:
+        case CANCELED:
+          // clear up the cache a bit
+          jobCounters.invalidate(record.getKey());
         default:
           break;
       }

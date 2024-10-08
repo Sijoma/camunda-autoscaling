@@ -44,7 +44,7 @@ spec:
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="validate-payment-info"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="validate-payment-info"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
@@ -99,7 +99,7 @@ spec:
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="send-welcome-email"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="send-welcome-email"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
@@ -154,7 +154,7 @@ spec:
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="notify-customer-failure"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="notify-customer-failure"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
@@ -209,7 +209,7 @@ spec:
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="create-unverified-user"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="create-unverified-user"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
@@ -257,21 +257,21 @@ spec:
       name: jobs_available_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(zeebe_jobs_available{namespace="demo", jobType="clean-unverified-user"}) by (namespace, jobType)
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="clean-up-user"}) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="clean-unverified-user"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="clean-up-user"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_used_capacity_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="clean-unverified-user"}) by (namespace, jobType)) * 100
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="clean-up-user"}) by (namespace, jobType)) * 100
         threshold: '50'
 ---
 apiVersion: keda.sh/v1alpha1
@@ -312,19 +312,19 @@ spec:
       name: jobs_available_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(zeebe_jobs_available{namespace="demo", jobType="send-verification-email"}) by (namespace, jobType)
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="verify-email"}) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="send-verification-email"}[10s])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="verify-email"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_used_capacity_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="send-verification-email"}) by (namespace, jobType)) * 100
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="verify-email"}) by (namespace, jobType)) * 100
         threshold: '50'
