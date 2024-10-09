@@ -13,11 +13,12 @@ This repository contains the following:
 - Local kind setup for testing inside the `deploy` folder.
 
 
-## How to get started
+## Scaling Brokers
 
 1. Setup kind cluster & deploy the helm chart
 ```bash
-make setup-dev
+make setup-kind
+make deploy-stack
 ```
 2. Go to Operator directory && build and deploy it to the current kubernetes context
 ```
@@ -32,11 +33,15 @@ apiVersion: camunda.sijoma.dev/v1alpha1
 kind: ZeebeAutoscaler
 metadata:
   name: camunda-platform-zeebe
-  namespace: camunda-platform # <-- namespace where the statefulset is in
 spec:
   replicas: 3
   zeebeRef:
-    name: camunda-platform-zeebe # <-- name of the statefulset
+    # Name of the Zeebe StatefulSet to scale in the same namespace
+    name: camunda-platform-zeebe # Default (can be omitted)
+    gateway:
+      port: 9600
+      # Name of the Service of the Zeebe Gateway
+      serviceName: camunda-platform-zeebe-gateway # Default (can be omitted)
 ```
 4. Scale Camunda Up
 ```bash
@@ -48,9 +53,9 @@ kubectl scale zeebeautoscalers.camunda.sijoma.dev camunda-platform-zeebe --names
 kubectl scale zeebeautoscalers.camunda.sijoma.dev camunda-platform-zeebe --namespace camunda-platform  --replicas 3
 ```
 
-### Autoscaling - based on Prometheus metrics
+### Autoscaling Brokers with HPA- based on Prometheus metrics - WIP
 
-This requires a proper [Prometheus](https://prometheus.io) & [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) setup. 
+This requires a [Prometheus](https://prometheus.io) & [Prometheus Adapter](https://github.com/kubernetes-sigs/prometheus-adapter) setup to expose the metrics to Kubernetes. 
 
 If you want to learn more about this the following article may help to understand the basics: https://learnk8s.io/autoscaling-apps-kubernetes
 
@@ -69,10 +74,10 @@ spec:
   metrics:
     - type: Pods
       pods:
-        # TODO: find a proper metric
+        # TODO: Needs proper metric
         metric:
           name: zeebe_backpressure_inflight_requests_count
-        # TODO: find a proper target
+        # TODO: Needs proper target
         target:
           type: AverageValue
           averageValue: "50"
@@ -80,5 +85,9 @@ spec:
     apiVersion: camunda.sijoma.dev/v1alpha1
     kind: ZeebeAutoscaler
     name: camunda-platform-zeebe
-
 ```
+
+
+### Autoscaling Workers from Zero
+
+More details can be found [here](demo/README.md)
