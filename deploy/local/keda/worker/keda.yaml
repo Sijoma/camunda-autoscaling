@@ -202,21 +202,21 @@ spec:
       name: jobs_available_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: sum(zeebe_jobs_available{namespace="demo", jobType="create-unverified-user"}) by (namespace, jobType)
+        query: sum(zeebe_jobs_available{namespace="demo", jobType="create-user"}) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_activated_rate
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="create-unverified-user"}[1m])) by (namespace, jobType)
+        query: max(rate(zeebe_client_worker_job_activated_total{namespace="demo", jobType="create-user"}[1m])) by (namespace, jobType)
         threshold: '1'
         activationThreshold: '1'
     - type: prometheus
       name: jobs_used_capacity_metric
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc:9090
-        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="create-unverified-user"}) by (namespace, jobType)) * 100
+        query: (avg(zeebe_client_worker_job_capacity{namespace="demo", jobType="create-user"}) by (namespace, jobType)) * 100
         threshold: '50'
 ---
 apiVersion: keda.sh/v1alpha1

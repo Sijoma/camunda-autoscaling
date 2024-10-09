@@ -125,7 +125,7 @@ spec:
                   -Dapp.worker.capacity=15
                   -Dapp.worker.pollingDelay=1ms
                   -Dapp.worker.workerName="create-user"
-                  -Dapp.worker.jobType="create-unverified-user"
+                  -Dapp.worker.jobType="create-user"
                   -Dapp.worker.payloadPath="bpmn/demo/worker-payload.json"
                   -Dapp.worker.completionDelay=400ms
                   -Dapp.worker.timeout=10s
