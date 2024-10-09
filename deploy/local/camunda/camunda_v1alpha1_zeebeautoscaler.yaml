@@ -6,8 +6,8 @@ spec:
   replicas: 3
   zeebeRef:
     # Name of the Zeebe StatefulSet to scale in the same namespace
-    name: camunda-platform-zeebe
+    name: camunda-platform-zeebe # Default (can be omitted)
     gateway:
-      port: 9600
       # Name of the Service of the Zeebe Gateway
-      serviceName: camunda-platform-zeebe-gateway
+      serviceName: camunda-platform-zeebe-gateway # Default (can be omitted)
+      port: 9600
